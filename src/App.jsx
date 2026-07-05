@@ -229,14 +229,14 @@ function App() {
 
   return (
     <>
-      {/* Custom Circular Cursor elements */}
+      {/* Custom Circular Cursor elements with inline pointer-events: none safety override */}
       <div 
         className="cursor-dot" 
-        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
+        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px`, pointerEvents: 'none' }}
       ></div>
       <div 
         className={`cursor-outline ${isHoveringInteractive ? 'hovered' : ''}`}
-        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
+        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px`, pointerEvents: 'none' }}
       ></div>
 
       {/* Top Header Navigation */}
@@ -307,7 +307,7 @@ function App() {
         
         <div className="landing-action">
           <a href="#about-card" className="btn-pill" id="btn-landing-enter">Explore Portfolio</a>
-          <span className="btn-circle">↓</span>
+          <a href="#about-card" className="btn-circle">↓</a>
         </div>
         
         <span className="scroll-indicator">scroll down</span>
@@ -340,7 +340,7 @@ function App() {
             
             <div className="hero-action">
               <a href="#projects-list" className="btn-pill">projects</a>
-              <span className="btn-circle">→</span>
+              <a href="#projects-list" className="btn-circle">→</a>
             </div>
             
             <div className="hero-socials-grid">
@@ -366,7 +366,7 @@ function App() {
             <p className="spotlight-desc">High-fidelity 3D robotic arm simulation controlled programmatically. Implemented closed-loop trajectory tracking.</p>
             <div className="spotlight-action">
               <a href="https://github.com/krutiktikam/blender-robotic-arm-simulation" target="_blank" rel="noopener noreferrer" className="btn-pill">Read code</a>
-              <span className="btn-circle">→</span>
+              <a href="https://github.com/krutiktikam/blender-robotic-arm-simulation" target="_blank" rel="noopener noreferrer" className="btn-circle">→</a>
             </div>
           </div>
 
