@@ -33,7 +33,7 @@ const projectsData = [
     title: "OmniMath-Local",
     description: "Enterprise async backend pipeline serving mathematical workflows with math-aware semantic search indexing via ChromaDB.",
     tech: ["FastAPI", "ChromaDB", "Pydantic", "SymPy"],
-    gitUrl: "https://github.com/krutiktikam/omnimath-backend"
+    gitUrl: "https://github.com/krutiktikam/omni-math"
   },
   {
     title: "NeuroRehab-BCI",
