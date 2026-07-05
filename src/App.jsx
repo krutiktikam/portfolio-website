@@ -3,31 +3,43 @@ import aboutBgImg from './assets/about_bg.jpg';
 import spotlightImg from './assets/spotlight.jpg';
 import './App.css';
 
-// Projects dataset extracted from your PDF Resume
+// Projects dataset extracted from your GitHub Profile README
 const projectsData = [
   {
     title: "Blender Robotic Arm Simulation",
-    description: "Engineered a 3D robotic arm waypoint trajectory tracking environment in Blender using closed-loop proportional (P-control) feedback and trained Stable-Baselines3 PPO reinforcement learning agents.",
-    tech: ["Python", "OpenAI Gymnasium", "Stable-Baselines3", "Blender API"],
-    gitUrl: "https://github.com/google/blender_mcp"
+    description: "High-fidelity 3D robotic arm simulation controlled programmatically. Implemented closed-loop trajectory tracking and automatic knuckle contact grasp lock.",
+    tech: ["Python", "Blender API", "Control Systems", "Physics Baking"],
+    gitUrl: "https://github.com/krutiktikam/blender-robotic-arm-simulation"
   },
   {
     title: "Football Any-latics Pro",
-    description: "Designed a sports ETL pipeline that ingests live match fixtures into relational databases, training XGBoost models to compute match win probabilities and visualizing real-time projections via Streamlit.",
+    description: "Ingests live data via automated ETL pipelines for real-time XGBoost probability forecasting and sports match predictions.",
     tech: ["Python", "XGBoost", "Streamlit", "Pandas", "REST APIs"],
-    gitUrl: "https://github.com/google/footbal_anylatics_project"
+    gitUrl: "https://github.com/krutiktikam/footbal-anylatics-project"
   },
   {
-    title: "PokéArchitect Analytics Platform",
-    description: "A decoupled React/Vite and FastAPI platform using K-Means Clustering for data discovery and Cosine Similarity for real-time recommendations, mapped with dynamic Recharts (D3) dashboards.",
-    tech: ["React", "FastAPI", "PostgreSQL", "Scikit-Learn", "Recharts"],
-    gitUrl: "https://github.com/google/poke-architect"
+    title: "PokéArchitect",
+    description: "Decoupled high-fidelity web platform featuring a Scikit-Learn clustering model for archetype discovery and similarity scoring.",
+    tech: ["FastAPI", "React", "PostgreSQL", "Supabase", "Scikit-Learn"],
+    gitUrl: "https://github.com/krutiktikam/poke-architect"
   },
   {
-    title: "OmniMath-Local Vector RAG",
-    description: "An async backend calculation framework serving custom validation logic and semantic vector search using ChromaDB for structured text chunking and indexing in a local RAG pipeline.",
-    tech: ["FastAPI", "ChromaDB", "Pydantic", "SymPy", "Docker"],
-    gitUrl: "https://github.com/google/omnimath-backend"
+    title: "PokéMarket",
+    description: "Institutional-grade trading terminal featuring a Gemini Vision AI card scanning pipeline and 30-day linear regression price projections.",
+    tech: ["Next.js 15", "TypeScript", "Gemini Vision AI", "Supabase", "Recharts"],
+    gitUrl: "https://github.com/krutiktikam/poke-hodl"
+  },
+  {
+    title: "OmniMath-Local",
+    description: "Enterprise async backend pipeline serving mathematical workflows with math-aware semantic search indexing via ChromaDB.",
+    tech: ["FastAPI", "ChromaDB", "Pydantic", "SymPy"],
+    gitUrl: "https://github.com/krutiktikam/omnimath-backend"
+  },
+  {
+    title: "NeuroRehab-BCI",
+    description: "End-to-end signal processing pipeline classifying motor imagery EEG signals using an EEGNet model and LSL streaming simulation.",
+    tech: ["PyTorch", "EEGNet", "LSL (Lab Streaming Layer)", "FastAPI"],
+    gitUrl: "https://github.com/krutiktikam/BCI-MotorImagery-Pipeline"
   }
 ];
 
@@ -58,7 +70,7 @@ const certificationsData = [
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
-  const [gitUsername] = useState('krutiktikam'); // Static static username representing you
+  const [gitUsername] = useState('krutiktikam'); // Static username representing you
   const [gitUserData, setGitUserData] = useState(null);
   const [gitLoading, setGitLoading] = useState(false);
   const [gitError, setGitError] = useState(null);
@@ -332,10 +344,10 @@ function App() {
             </div>
             
             <div className="hero-socials-grid">
-              <a href="https://github.com/krutiktikam7" target="_blank" rel="noopener noreferrer" className="social-pill">
+              <a href="https://github.com/krutiktikam" target="_blank" rel="noopener noreferrer" className="social-pill">
                 GitHub
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-pill">
+              <a href="https://www.linkedin.com/in/krutik-tikam-95339b286/" target="_blank" rel="noopener noreferrer" className="social-pill">
                 LinkedIn
               </a>
               <a href="mailto:krutiktikam7@gmail.com" className="social-pill">
@@ -351,9 +363,9 @@ function App() {
           <div className="behance-card spotlight-card" style={{ backgroundImage: `linear-gradient(rgba(13,13,16,0.85), rgba(13,13,16,0.95)), url(${spotlightImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             <span className="section-label">spotlight project</span>
             <h2 className="spotlight-title">Blender Robotic Arm Simulation</h2>
-            <p className="spotlight-desc">Engineered a 3D robotic arm environment in Blender utilizing closed-loop trajectory tracking and PPO training.</p>
+            <p className="spotlight-desc">High-fidelity 3D robotic arm simulation controlled programmatically. Implemented closed-loop trajectory tracking.</p>
             <div className="spotlight-action">
-              <a href="https://github.com/google/blender_mcp" target="_blank" rel="noopener noreferrer" className="btn-pill">Read code</a>
+              <a href="https://github.com/krutiktikam/blender-robotic-arm-simulation" target="_blank" rel="noopener noreferrer" className="btn-pill">Read code</a>
               <span className="btn-circle">→</span>
             </div>
           </div>
