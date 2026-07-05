@@ -798,14 +798,14 @@ function App() {
             
             <div className="pdf-viewer-wrapper">
               <object 
-                data="/resume.pdf" 
+                data="./resume.pdf" 
                 type="application/pdf" 
                 className="pdf-iframe"
               >
-                <iframe src="/resume.pdf" className="pdf-iframe" title="Krutik Tikam Resume Viewer">
+                <iframe src="./resume.pdf" className="pdf-iframe" title="Krutik Tikam Resume Viewer">
                   <div className="pdf-fallback-message">
                     <p>Your browser does not support in-app PDF viewing.</p>
-                    <a href="/resume.pdf" download className="btn-pill" style={{ marginTop: '16px', display: 'inline-block' }}>
+                    <a href="./resume.pdf" download className="btn-pill" style={{ marginTop: '16px', display: 'inline-block' }}>
                       Download Resume Instead
                     </a>
                   </div>
@@ -814,7 +814,7 @@ function App() {
             </div>
 
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-start' }}>
-              <a href="/resume.pdf" download className="btn-pill" id="btn-modal-resume-download">
+              <a href="./resume.pdf" download className="btn-pill" id="btn-modal-resume-download">
                 Download PDF Document
               </a>
               <button 
