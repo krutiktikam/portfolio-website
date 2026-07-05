@@ -3,43 +3,117 @@ import aboutBgImg from './assets/about_bg.jpg';
 import spotlightImg from './assets/spotlight.jpg';
 import './App.css';
 
-// Projects dataset extracted from your GitHub Profile README
+// 3D perspective cursor tracking card wrapper component
+const TiltCard = ({ children, id, className, onClick, style = {} }) => {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e) => {
+    // Disable tilt physics on touch devices (phones/tablets) to preserve fluid scrolling
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const xc = rect.width / 2;
+    const yc = rect.height / 2;
+    
+    // Tilt threshold of 7 degrees max
+    const rotateX = ((yc - y) / yc) * 7;
+    const rotateY = ((x - xc) / xc) * 7;
+    
+    setTilt({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseEnter = () => {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setTilt({ x: 0, y: 0 });
+  };
+
+  const cardStyle = {
+    ...style,
+    transform: isHovered 
+      ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-4px)`
+      : 'none',
+    transition: isHovered ? 'transform 0.05s ease-out' : 'transform 0.4s ease-out',
+    cursor: onClick ? 'pointer' : 'default'
+  };
+
+  return (
+    <div 
+      id={id}
+      className={`behance-card ${className || ''}`}
+      style={cardStyle}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+    >
+      {children}
+    </div>
+  );
+};
+
+// Projects dataset with detailed Case-Study structures matching your resume
 const projectsData = [
   {
     title: "Blender Robotic Arm Simulation",
     description: "High-fidelity 3D robotic arm simulation controlled programmatically. Implemented closed-loop trajectory tracking and automatic knuckle contact grasp lock.",
     tech: ["Python", "Blender API", "Control Systems", "Physics Baking"],
-    gitUrl: "https://github.com/krutiktikam/blender-robotic-arm-simulation"
+    gitUrl: "https://github.com/krutiktikam/blender-robotic-arm-simulation",
+    problem: "Developing and testing robotic control algorithms directly on physical arms poses high risks of hardware damage and lacks quick, repeatable telemetry logging.",
+    architecture: "Engineered a programmatically baked 3D robotic arm simulation environment using Blender API. Developed custom feedback controllers (P-control) for joint waypoint tracking, along with a knuckle-contact raycast detector to automatically lock joints on object collision.",
+    mlApproach: "Integrated an OpenAI Gymnasium environment wrapper enclosing the simulation scene. Used the Stable-Baselines3 library to train continuous action-space Reinforcement Learning policies using PPO (Proximal Policy Optimization)."
   },
   {
     title: "Football Any-latics Pro",
     description: "Ingests live data via automated ETL pipelines for real-time XGBoost probability forecasting and sports match predictions.",
     tech: ["Python", "XGBoost", "Streamlit", "Pandas", "REST APIs"],
-    gitUrl: "https://github.com/krutiktikam/footbal-anylatics-project"
+    gitUrl: "https://github.com/krutiktikam/footbal-anylatics-project",
+    problem: "Sports prediction dashboards are frequently delayed by high data cleaning processing overhead and rarely support live-in-play win-probability updates.",
+    architecture: "Architected an automated Python ETL data collection pipeline. It queries sports match schedules and player stats from open REST APIs, cleans raw JSON streams, and structures the records into a relational database.",
+    mlApproach: "Trained an XGBoost model on historical match datasets to forecast live match win probabilities. Built a web-based dashboard using Streamlit to display match metrics and render predictions."
   },
   {
     title: "PokéArchitect",
     description: "Decoupled high-fidelity web platform featuring a Scikit-Learn clustering model for archetype discovery and similarity scoring.",
     tech: ["FastAPI", "React", "PostgreSQL", "Supabase", "Scikit-Learn"],
-    gitUrl: "https://github.com/krutiktikam/poke-architect"
+    gitUrl: "https://github.com/krutiktikam/poke-architect",
+    problem: "Simulated balancing systems require matching and grouping 1,000+ data profiles into coherent archetypes in real-time.",
+    architecture: "Built a decoupled web application utilizing a fast, asynchronous FastAPI backend and a responsive React/Vite frontend secured with strict CORS and origin validation controls.",
+    mlApproach: "Developed an analytical heuristic engine utilizing Scikit-Learn. It clusters data profiles into distinct archetypes using K-Means Clustering and runs Cosine Similarity comparison tests to generate recommendations."
   },
   {
     title: "PokéMarket",
     description: "Institutional-grade trading terminal featuring a Gemini Vision AI card scanning pipeline and 30-day linear regression price projections.",
     tech: ["Next.js 15", "TypeScript", "Gemini Vision AI", "Supabase", "Recharts"],
-    gitUrl: "https://github.com/krutiktikam/poke-hodl"
+    gitUrl: "https://github.com/krutiktikam/poke-hodl",
+    problem: "Evaluating physical collector assets traditionally requires manual card data entry, resulting in human valuation errors.",
+    architecture: "Designed a trading terminal leveraging Next.js 15 (App Router) and TypeScript. Integrates a visual scanning pipeline connected to Google Gemini Vision AI to recognize cards from live camera photos.",
+    mlApproach: "Combines Gemini's zero-shot image classification models with linear regression algorithms to project 30-day card market value fluctuations, plotted via responsive Recharts graphs."
   },
   {
     title: "OmniMath-Local",
     description: "Enterprise async backend pipeline serving mathematical workflows with math-aware semantic search indexing via ChromaDB.",
     tech: ["FastAPI", "ChromaDB", "Pydantic", "SymPy"],
-    gitUrl: "https://github.com/krutiktikam/omni-math"
+    gitUrl: "https://github.com/krutiktikam/omni-math",
+    problem: "Standard text search engines fail to parse math-heavy documents, resulting in low lookup accuracy for scientific equations.",
+    architecture: "Created an enterprise-grade async backend using FastAPI and SymPy for symbolic math verification. Integrated a local RAG vector search database to find math concepts.",
+    mlApproach: "Implemented semantic vector search using ChromaDB. Developed custom mathematical chunking parameters and validated incoming workflows using strict Pydantic schemas."
   },
   {
     title: "NeuroRehab-BCI",
     description: "End-to-end signal processing pipeline classifying motor imagery EEG signals using an EEGNet model and LSL streaming simulation.",
     tech: ["PyTorch", "EEGNet", "LSL (Lab Streaming Layer)", "FastAPI"],
-    gitUrl: "https://github.com/krutiktikam/BCI-MotorImagery-Pipeline"
+    gitUrl: "https://github.com/krutiktikam/BCI-MotorImagery-Pipeline",
+    problem: "Brain-Computer Interface applications require real-time signal classification of noisy EEG streams with sub-second latencies.",
+    architecture: "Designed a signal processing pipeline in PyTorch. Simulates live neural signals by streaming EEG datasets using the LSL (Lab Streaming Layer) protocol.",
+    mlApproach: "Processes and classifies active motor imagery brain states (like imagining hand movement) using an EEGNet neural network model, communicating inferences via a fast FastAPI local socket."
   }
 ];
 
@@ -70,7 +144,7 @@ const certificationsData = [
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
-  const [gitUsername] = useState('krutiktikam'); // Static username representing you
+  const [gitUsername] = useState('krutiktikam'); // Static profile username
   const [gitUserData, setGitUserData] = useState(null);
   const [gitLoading, setGitLoading] = useState(false);
   const [gitError, setGitError] = useState(null);
@@ -82,7 +156,11 @@ function App() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
 
-  // Mouse move and hover trackers
+  // Modals States
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+
+  // Mouse move and hover trackers for custom cursor
   useEffect(() => {
     const handleMouseMove = (e) => {
       setCursorPos({ x: e.clientX, y: e.clientY });
@@ -200,7 +278,7 @@ function App() {
           public_repos: 14,
           followers: 24,
           following: 16,
-          html_url: "https://github.com/krutiktikam7",
+          html_url: "https://github.com/krutiktikam",
           totalStars: 18,
           totalForks: 8,
           languages: [
@@ -290,9 +368,13 @@ function App() {
               </a>
             </li>
           </ul>
-          <a href="/resume.pdf" download className="btn-pill header-resume-btn" id="btn-header-resume">
+          <button 
+            onClick={() => setShowResumeModal(true)} 
+            className="btn-pill header-resume-btn" 
+            id="btn-header-resume"
+          >
             resume
-          </a>
+          </button>
         </div>
       </header>
 
@@ -320,7 +402,7 @@ function App() {
             ========================================== */}
         <div className="portfolio-column">
           {/* Profile Card */}
-          <div className="behance-card" id="profile-card">
+          <TiltCard id="profile-card">
             <div className="hero-header">
               <span className="logo">Overview</span>
               <div className="hero-hamburger">
@@ -357,21 +439,25 @@ function App() {
                 Phone
               </a>
             </div>
-          </div>
+          </TiltCard>
 
           {/* Spotlight Highlight Card */}
-          <div className="behance-card spotlight-card" style={{ backgroundImage: `linear-gradient(rgba(13,13,16,0.85), rgba(13,13,16,0.95)), url(${spotlightImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+          <TiltCard 
+            className="spotlight-card" 
+            style={{ backgroundImage: `linear-gradient(rgba(13,13,16,0.85), rgba(13,13,16,0.95)), url(${spotlightImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            onClick={() => setSelectedProject(projectsData[0])}
+          >
             <span className="section-label">spotlight project</span>
             <h2 className="spotlight-title">Blender Robotic Arm Simulation</h2>
             <p className="spotlight-desc">High-fidelity 3D robotic arm simulation controlled programmatically. Implemented closed-loop trajectory tracking.</p>
             <div className="spotlight-action">
-              <a href="https://github.com/krutiktikam/blender-robotic-arm-simulation" target="_blank" rel="noopener noreferrer" className="btn-pill">Read code</a>
-              <a href="https://github.com/krutiktikam/blender-robotic-arm-simulation" target="_blank" rel="noopener noreferrer" className="btn-circle">→</a>
+              <button className="btn-pill" style={{ pointerEvents: 'none' }}>Read Case Study</button>
+              <span className="btn-circle">→</span>
             </div>
-          </div>
+          </TiltCard>
 
           {/* About Me & Tech Stack */}
-          <div className="behance-card" id="about-card">
+          <TiltCard id="about-card">
             <span className="section-label">/About me ...</span>
             <p className="about-desc">
               B.Sc. Computer Science student specializing in Artificial Intelligence and Machine Learning. Passionate about solving complex architectural scaling and predictive data pipeline challenges.
@@ -399,7 +485,7 @@ function App() {
                 <p className="skill-cat-content">Git / GitHub / Docker / Vercel / Render / Postman / Lab Streaming Layer (LSL) / Blender API</p>
               </div>
             </div>
-          </div>
+          </TiltCard>
         </div>
 
         {/* ==========================================
@@ -407,7 +493,7 @@ function App() {
             ========================================== */}
         <div className="portfolio-column">
           {/* Work experience */}
-          <div className="behance-card" id="work-card">
+          <TiltCard id="work-card">
             <span className="section-label" style={{ textAlign: 'right', display: 'block' }}>Experience & Education</span>
             
             <div className="work-timeline">
@@ -425,10 +511,10 @@ function App() {
                 </div>
               ))}
             </div>
-          </div>
+          </TiltCard>
 
           {/* Certifications Card */}
-          <div className="behance-card" id="certifications-card">
+          <TiltCard id="certifications-card">
             <span className="section-label">Certifications</span>
             <div className="skills-stack-list" style={{ marginTop: '8px' }}>
               {certificationsData.map((cert, idx) => (
@@ -442,7 +528,7 @@ function App() {
                 </div>
               ))}
             </div>
-          </div>
+          </TiltCard>
 
           {/* Projects List Catalog */}
           <div id="projects-list">
@@ -451,7 +537,11 @@ function App() {
             {projectsData.map((project, idx) => {
               const elementId = project.title.toLowerCase().replace(/\s+/g, '-');
               return (
-                <div key={idx} className="behance-card" id={`project-card-${elementId}`}>
+                <TiltCard 
+                  key={idx} 
+                  id={`project-card-${elementId}`}
+                  onClick={() => setSelectedProject(project)}
+                >
                   <h3 className="project-card-title">{project.title}</h3>
                   
                   <div className="project-card-tags">
@@ -464,11 +554,11 @@ function App() {
                   
                   <div className="project-card-actions">
                     <div className="project-card-action-links">
-                      <a href={project.gitUrl} target="_blank" rel="noopener noreferrer">github</a>
+                      <button className="btn-pill" style={{ padding: '6px 14px', fontSize: '11px', pointerEvents: 'none' }}>View Case Study</button>
                     </div>
-                    <a href={project.gitUrl} target="_blank" rel="noopener noreferrer" className="btn-circle">↗</a>
+                    <span className="btn-circle">↗</span>
                   </div>
-                </div>
+                </TiltCard>
               );
             })}
           </div>
@@ -479,7 +569,7 @@ function App() {
             ========================================== */}
         <div className="portfolio-column">
           {/* Git Metrics */}
-          <div className="behance-card" id="git-metrics-card">
+          <TiltCard id="git-metrics-card">
             <span className="section-label">Live Git Monitor</span>
 
             {gitLoading && (
@@ -559,10 +649,10 @@ function App() {
                 )}
               </div>
             )}
-          </div>
+          </TiltCard>
 
           {/* Contacts footer */}
-          <div className="behance-card" id="contacts-card">
+          <TiltCard id="contacts-card">
             <span className="section-label">... /Contacts ...</span>
             
             <div className="contacts-nav-links">
@@ -634,9 +724,110 @@ function App() {
                 </div>
               )}
             </form>
-          </div>
+          </TiltCard>
         </div>
       </div>
+
+      {/* ==========================================
+          MODALS PORTAL OVERLAYS
+          ========================================== */}
+      
+      {/* Project Case Study Details Modal */}
+      {selectedProject && (
+        <div className="modal-backdrop" onClick={() => setSelectedProject(null)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setSelectedProject(null)}>✕</button>
+            <h2 className="modal-title">{selectedProject.title}</h2>
+            
+            <div className="project-card-tags" style={{ marginBottom: '24px' }}>
+              {selectedProject.tech.map((tag, idx) => (
+                <span key={idx} className="project-card-tag">{tag}</span>
+              ))}
+            </div>
+
+            <div className="modal-body">
+              <div className="modal-section">
+                <h4 className="modal-section-title">The Problem</h4>
+                <p className="modal-section-content" style={{ marginTop: '8px' }}>
+                  {selectedProject.problem}
+                </p>
+              </div>
+
+              <div className="modal-section">
+                <h4 className="modal-section-title">The Architecture</h4>
+                <p className="modal-section-content" style={{ marginTop: '8px' }}>
+                  {selectedProject.architecture}
+                </p>
+              </div>
+
+              <div className="modal-section">
+                <h4 className="modal-section-title">AI & Machine Learning Approach</h4>
+                <p className="modal-section-content" style={{ marginTop: '8px' }}>
+                  {selectedProject.mlApproach}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '36px', display: 'flex', gap: '16px' }}>
+              <a 
+                href={selectedProject.gitUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn-pill"
+              >
+                View Repository Code
+              </a>
+              <button 
+                className="btn-pill" 
+                style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+                onClick={() => setSelectedProject(null)}
+              >
+                Close Case Study
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Inline PDF Resume Viewer Modal */}
+      {showResumeModal && (
+        <div className="modal-backdrop" onClick={() => setShowResumeModal(false)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setShowResumeModal(false)}>✕</button>
+            <h2 className="modal-title">Krutik Tikam — Resume</h2>
+            
+            <div className="pdf-viewer-wrapper">
+              <object 
+                data="/resume.pdf" 
+                type="application/pdf" 
+                className="pdf-iframe"
+              >
+                <iframe src="/resume.pdf" className="pdf-iframe" title="Krutik Tikam Resume Viewer">
+                  <div className="pdf-fallback-message">
+                    <p>Your browser does not support in-app PDF viewing.</p>
+                    <a href="/resume.pdf" download className="btn-pill" style={{ marginTop: '16px', display: 'inline-block' }}>
+                      Download Resume Instead
+                    </a>
+                  </div>
+                </iframe>
+              </object>
+            </div>
+
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-start' }}>
+              <a href="/resume.pdf" download className="btn-pill" id="btn-modal-resume-download">
+                Download PDF Document
+              </a>
+              <button 
+                className="btn-pill" 
+                style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+                onClick={() => setShowResumeModal(false)}
+              >
+                Close Reader
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
