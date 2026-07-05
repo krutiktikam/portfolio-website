@@ -3,57 +3,62 @@ import aboutBgImg from './assets/about_bg.jpg';
 import spotlightImg from './assets/spotlight.jpg';
 import './App.css';
 
-// Pre-loaded projects corresponding to your workspace folders
+// Projects dataset extracted from your PDF Resume
 const projectsData = [
   {
-    title: "BCI EEG Motor Imagery Classifier",
-    description: "Signal processing and machine learning pipeline to classify motor imagery tasks from EEG datasets.",
-    tech: ["Python", "MNE", "Scikit-Learn", "SciPy"],
-    gitUrl: "https://github.com/google/BCI_MI_pjt"
-  },
-  {
-    title: "Poke-Stocks Trading Simulation",
-    description: "An algorithmic trading platform simulating stock markets with automated trading strategies.",
-    tech: ["React", "Node.js", "Express", "Chart.js"],
-    gitUrl: "https://github.com/google/Poke-stocks"
-  },
-  {
-    title: "Poke-Architect Builder",
-    description: "A system builder and architectural simulation framework exploring complex systems design.",
-    tech: ["Python", "Simulation", "Software Architecture"],
-    gitUrl: "https://github.com/google/poke-architect"
-  },
-  {
-    title: "Football Data Analytics Engine",
-    description: "A sports analytics dashboard running statistical models and visualizing player metrics.",
-    tech: ["Python", "Pandas", "Matplotlib", "BeautifulSoup"],
-    gitUrl: "https://github.com/google/footbal_anylatics_project"
-  },
-  {
-    title: "Blender MCP Tool Integration",
-    description: "Model Context Protocol (MCP) server connecting LLMs to Blender 3D modeling scripts.",
-    tech: ["Python", "Blender API", "MCP API", "LLMs"],
+    title: "Blender Robotic Arm Simulation",
+    description: "Engineered a 3D robotic arm waypoint trajectory tracking environment in Blender using closed-loop proportional (P-control) feedback and trained Stable-Baselines3 PPO reinforcement learning agents.",
+    tech: ["Python", "OpenAI Gymnasium", "Stable-Baselines3", "Blender API"],
     gitUrl: "https://github.com/google/blender_mcp"
   },
   {
-    title: "Omnimath Backend API",
-    description: "High-performance backend mathematical computation engine and REST API.",
-    tech: ["Go", "Docker", "REST API", "Testing"],
+    title: "Football Any-latics Pro",
+    description: "Designed a sports ETL pipeline that ingests live match fixtures into relational databases, training XGBoost models to compute match win probabilities and visualizing real-time projections via Streamlit.",
+    tech: ["Python", "XGBoost", "Streamlit", "Pandas", "REST APIs"],
+    gitUrl: "https://github.com/google/footbal_anylatics_project"
+  },
+  {
+    title: "PokéArchitect Analytics Platform",
+    description: "A decoupled React/Vite and FastAPI platform using K-Means Clustering for data discovery and Cosine Similarity for real-time recommendations, mapped with dynamic Recharts (D3) dashboards.",
+    tech: ["React", "FastAPI", "PostgreSQL", "Scikit-Learn", "Recharts"],
+    gitUrl: "https://github.com/google/poke-architect"
+  },
+  {
+    title: "OmniMath-Local Vector RAG",
+    description: "An async backend calculation framework serving custom validation logic and semantic vector search using ChromaDB for structured text chunking and indexing in a local RAG pipeline.",
+    tech: ["FastAPI", "ChromaDB", "Pydantic", "SymPy", "Docker"],
     gitUrl: "https://github.com/google/omnimath-backend"
   }
 ];
 
-// Experience timeline details
+// Experience timeline details from your resume
 const experienceData = [
-  { year: "2024 -", company: "Neural Engineering Lab", role: "BCI Research Associate", duration: "1 year 2 months" },
-  { year: "2023 - 2024", company: "AI Solutions Lab", role: "AI Tool Integrator", duration: "10 months" },
-  { year: "2021 - 2023", company: "Fullstack Agency", role: "Software Engineer", duration: "1 year 11 months" },
-  { year: "2020 - 2021", company: "Tech Solutions", role: "Junior Python Dev", duration: "9 months" }
+  { 
+    year: "Dec 2025 - Feb 2026", 
+    company: "Talent Corner HR Services Pvt. Ltd.", 
+    role: "Full-Stack Developer Intern", 
+    duration: "3 months",
+    details: "Developed responsive FastAPI and JS applications, optimizing database schemas in PostgreSQL to reduce applicant search latencies." 
+  },
+  { 
+    year: "2023 - 2026", 
+    company: "Nagandas Khandwala College", 
+    role: "B.Sc. Computer Science (AI & ML Specialization)", 
+    duration: "Degree (CGPA: 7.5)",
+    details: "Focus: Data Structures, Neural Networks, Database Systems, Distributed Web Architecture." 
+  }
+];
+
+// Certifications from your resume
+const certificationsData = [
+  { category: "Cloud & Generative AI", items: ["AWS: Data Engineering for Generative AI Applications", "AWS: Connecting Systems & Machines for Manufacturing", "Microsoft Azure Cloud Computing SDP"] },
+  { category: "ML & Data Science", items: ["DeepLearning.AI Machine Learning Specialization", "TensorFlow Developer Professional Certificate"] },
+  { category: "Web Development", items: ["Meta Front-End Developer Professional Certificate", "Responsive Web Design (freeCodeCamp)"] }
 ];
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
-  const [gitUsername, setGitUsername] = useState('google'); // Default username
+  const [gitUsername, setGitUsername] = useState('google'); // Default username to fetch stats
   const [tempUsername, setTempUsername] = useState('google');
   const [gitUserData, setGitUserData] = useState(null);
   const [gitLoading, setGitLoading] = useState(false);
@@ -62,10 +67,41 @@ function App() {
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [contactSubmitted, setContactSubmitted] = useState(false);
 
+  // Custom Cursor State
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
+
+  // Mouse move and hover trackers
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseOver = (e) => {
+      const target = e.target;
+      const isInteractive = target.closest('a') || 
+                            target.closest('button') || 
+                            target.closest('.behance-card') || 
+                            target.closest('.btn-pill') || 
+                            target.closest('.btn-circle') || 
+                            target.closest('.social-pill') ||
+                            target.closest('input') ||
+                            target.closest('textarea');
+      setIsHoveringInteractive(!!isInteractive);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseover', handleMouseOver);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, []);
+
   // Active navigation scroll-spy
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about-card', 'projects-list', 'git-metrics-card', 'contacts-card'];
+      const sections = ['landing', 'about-card', 'projects-list', 'git-metrics-card', 'contacts-card'];
       const scrollPosition = window.scrollY + 250;
 
       for (const section of sections) {
@@ -74,7 +110,7 @@ function App() {
           const top = el.offsetTop;
           const height = el.offsetHeight;
           if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(section);
+            setActiveSection(section === 'landing' ? 'home' : section);
             break;
           }
         }
@@ -122,14 +158,24 @@ function App() {
 
   return (
     <>
+      {/* Custom Circular Cursor elements */}
+      <div 
+        className="cursor-dot" 
+        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
+      ></div>
+      <div 
+        className={`cursor-outline ${isHoveringInteractive ? 'hovered' : ''}`}
+        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
+      ></div>
+
       {/* Top Header Navigation */}
-      <header className="site-header" id="home">
+      <header className="site-header">
         <div className="header-container">
-          <span className="logo" id="site-logo">krutik.dev</span>
+          <span className="logo" id="site-logo">Krutik Tikam</span>
           <ul className="header-nav" id="nav-menu">
             <li>
               <a 
-                href="#home" 
+                href="#landing" 
                 className={activeSection === 'home' ? 'active' : ''}
                 id="nav-link-home"
               >
@@ -179,15 +225,33 @@ function App() {
         </div>
       </header>
 
+      {/* New Landing Screen Section */}
+      <section className="landing-screen" id="landing">
+        <h1 className="landing-title">Krutik Tikam</h1>
+        <span className="landing-subtitle">Full-Stack Developer & AI/ML Engineer</span>
+        
+        <p className="landing-tagline">
+          Analytical developer building scalable web architectures, optimized backend routing, and predictive signal processing pipelines using Next.js 15, FastAPI, PostgreSQL, and Python.
+        </p>
+        
+        <div className="landing-action">
+          <a href="#about-card" className="btn-pill" id="btn-landing-enter">Explore Portfolio</a>
+          <span className="btn-circle">↓</span>
+        </div>
+        
+        <span className="scroll-indicator">scroll down</span>
+      </section>
+
+      {/* Main Content Grid */}
       <div className="portfolio-layout">
         {/* ==========================================
             COLUMN 1: Intro, Spotlight & About
             ========================================== */}
         <div className="portfolio-column">
-          {/* Profile/Hero Card */}
+          {/* Profile Card */}
           <div className="behance-card" id="profile-card">
             <div className="hero-header">
-              <span className="logo">developer</span>
+              <span className="logo">Overview</span>
               <div className="hero-hamburger">
                 <span></span>
                 <span></span>
@@ -195,12 +259,12 @@ function App() {
             </div>
             
             <h1 className="hero-main-title">
-              <span>Full-stack</span>
-              <span className="underlined">Developer</span>
+              <span>Full-Stack</span>
+              <span className="underlined">Engineer</span>
             </h1>
             
             <p className="hero-bio">
-              My goal is to design clean, high-performance, and maintainable software systems that bridge neural engineering pipelines with production-ready AI tools.
+              Experienced in developing decoupled async REST APIs, real-time analytics dashboards, and automated ETL workflows to deploy high-performance, user-centric systems.
             </p>
             
             <div className="hero-action">
@@ -215,11 +279,11 @@ function App() {
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-pill">
                 LinkedIn
               </a>
-              <a href="mailto:your_email@example.com" className="social-pill">
+              <a href="mailto:krutiktikam7@gmail.com" className="social-pill">
                 E-mail
               </a>
-              <a href="https://t.me" target="_blank" rel="noopener noreferrer" className="social-pill">
-                Telegram
+              <a href="tel:+919284236446" className="social-pill">
+                Phone
               </a>
             </div>
           </div>
@@ -227,10 +291,10 @@ function App() {
           {/* Spotlight Highlight Card */}
           <div className="behance-card spotlight-card" style={{ backgroundImage: `linear-gradient(rgba(13,13,16,0.85), rgba(13,13,16,0.95)), url(${spotlightImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             <span className="section-label">spotlight project</span>
-            <h2 className="spotlight-title">BCI EEG Motor Imagery Classifier</h2>
-            <p className="spotlight-desc">Applying Scikit-Learn pipelines to classify motor imagery tasks from real-time brainwave streams.</p>
+            <h2 className="spotlight-title">Blender Robotic Arm Simulation</h2>
+            <p className="spotlight-desc">Engineered a 3D robotic arm environment in Blender utilizing closed-loop trajectory tracking and PPO training.</p>
             <div className="spotlight-action">
-              <a href="https://github.com/google/BCI_MI_pjt" target="_blank" rel="noopener noreferrer" className="btn-pill">Read code</a>
+              <a href="https://github.com/google/blender_mcp" target="_blank" rel="noopener noreferrer" className="btn-pill">Read code</a>
               <span className="btn-circle">→</span>
             </div>
           </div>
@@ -239,7 +303,7 @@ function App() {
           <div className="behance-card" id="about-card">
             <span className="section-label">/About me ...</span>
             <p className="about-desc">
-              Hello! I'm Krutik. I design full-stack systems and BCI signal processing pipelines, leveraging modern AI architectures to automate developer workflows.
+              B.Sc. Computer Science student specializing in Artificial Intelligence and Machine Learning. Passionate about solving complex architectural scaling and predictive data pipeline challenges.
             </p>
             
             <div className="about-portrait-container" id="about-visual-asset">
@@ -248,16 +312,20 @@ function App() {
             
             <div className="skills-stack-list">
               <div className="skill-category-block">
-                <h4 className="skill-cat-title">AI & Signal Processing</h4>
-                <p className="skill-cat-content">Python / MNE / EEG processing / Scikit-Learn / SciPy</p>
+                <h4 className="skill-cat-title">Frontend</h4>
+                <p className="skill-cat-content">React / Next.js 15 (App Router) / TypeScript / JavaScript / Tailwind CSS / Recharts (D3.js) / Framer Motion</p>
               </div>
               <div className="skill-category-block">
-                <h4 className="skill-cat-title">Back-end Systems</h4>
-                <p className="skill-cat-content">Go / Node.js / Express / Docker / REST APIs / MCP APIs</p>
+                <h4 className="skill-cat-title">Backend & Databases</h4>
+                <p className="skill-cat-content">FastAPI (Async) / Node.js / Python / PostgreSQL (Supabase) / SQL Alchemy / SQLite / RESTful APIs</p>
               </div>
               <div className="skill-category-block">
-                <h4 className="skill-cat-title">Front-end & Styles</h4>
-                <p className="skill-cat-content">React / JavaScript / HTML5 / CSS3 / Vanilla CSS / Responsive Layouts</p>
+                <h4 className="skill-cat-title">Data Analytics & ML</h4>
+                <p className="skill-cat-content">Pandas / NumPy / Scikit-Learn (K-Means, Cosine Similarity) / XGBoost / ETL Pipelines / ChromaDB / Data Visualizations</p>
+              </div>
+              <div className="skill-category-block">
+                <h4 className="skill-cat-title">DevOps & Tools</h4>
+                <p className="skill-cat-content">Git / GitHub / Docker / Vercel / Render / Postman / Lab Streaming Layer (LSL) / Blender API</p>
               </div>
             </div>
           </div>
@@ -269,7 +337,7 @@ function App() {
         <div className="portfolio-column">
           {/* Work experience */}
           <div className="behance-card" id="work-card">
-            <span className="section-label" style={{ textAlign: 'right', display: 'block' }}>Work</span>
+            <span className="section-label" style={{ textAlign: 'right', display: 'block' }}>Experience & Education</span>
             
             <div className="work-timeline">
               {experienceData.map((item, idx) => (
@@ -279,13 +347,29 @@ function App() {
                     <span className="timeline-company">{item.company}</span>
                     <span className="timeline-role">{item.role}</span>
                     <span className="timeline-duration">{item.duration}</span>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                      {item.details}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
-            
-            <div className="work-experience-summary">
-              Work experience: 4 years 8 months
+          </div>
+
+          {/* Certifications Card */}
+          <div className="behance-card" id="certifications-card">
+            <span className="section-label">Certifications</span>
+            <div className="skills-stack-list" style={{ marginTop: '8px' }}>
+              {certificationsData.map((cert, idx) => (
+                <div key={idx} className="skill-category-block">
+                  <h4 className="skill-cat-title">{cert.category}</h4>
+                  <ul style={{ listStyle: 'none', fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '6px' }}>
+                    {cert.items.map((item, iIdx) => (
+                      <li key={iIdx}>• {item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -323,7 +407,7 @@ function App() {
             COLUMN 3: Git Metrics & Contacts Footer
             ========================================== */}
         <div className="portfolio-column">
-          {/* Git Metrics (replacing Articles column) */}
+          {/* Git Metrics */}
           <div className="behance-card" id="git-metrics-card">
             <span className="section-label">Live Git Monitor</span>
             
@@ -360,7 +444,7 @@ function App() {
                     <span className="github-profile-name">{gitUserData.name || gitUsername}</span>
                     <a href={gitUserData.html_url} target="_blank" rel="noopener noreferrer" className="github-profile-login">
                       @{gitUserData.login}
-                    </a>
+                  </a>
                   </div>
                 </div>
                 
@@ -378,7 +462,7 @@ function App() {
                   </div>
                 </div>
 
-                {/* Readme Stats SVGs styled to fit Column 3 */}
+                {/* Readme Stats SVGs */}
                 <div className="github-stats-image-container">
                   <img 
                     src={`https://github-readme-stats.vercel.app/api?username=${gitUsername}&show_icons=true&bg_color=0e121a&title_color=ffffff&icon_color=ffffff&text_color=9a9a9f&border_color=rgba(255,255,255,0.06)&hide_border=false`}
@@ -411,7 +495,7 @@ function App() {
             <span className="section-label">... /Contacts ...</span>
             
             <div className="contacts-nav-links">
-              <a href="#home">Main</a>
+              <a href="#landing">Main</a>
               <a href="#about-card">About</a>
               <a href="#projects-list">Projects</a>
               <a href="#git-metrics-card">Metrics</a>
@@ -425,7 +509,7 @@ function App() {
             
             <div className="contacts-author-title">
               <span className="contacts-first-name">Developer</span>
-              <span className="contacts-last-name">Krutik</span>
+              <span className="contacts-last-name">Krutik Tikam</span>
             </div>
 
             {/* Clean minimal message form */}
