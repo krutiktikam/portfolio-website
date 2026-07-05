@@ -58,8 +58,7 @@ const certificationsData = [
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
-  const [gitUsername, setGitUsername] = useState('google'); // Default username to fetch stats
-  const [tempUsername, setTempUsername] = useState('google');
+  const [gitUsername] = useState('krutiktikam'); // Static static username representing you
   const [gitUserData, setGitUserData] = useState(null);
   const [gitLoading, setGitLoading] = useState(false);
   const [gitError, setGitError] = useState(null);
@@ -123,7 +122,6 @@ function App() {
 
   // Fetch GitHub Details with dynamic metrics processing and static resume fallback
   useEffect(() => {
-    if (!gitUsername) return;
     const fetchGitUser = async () => {
       setGitLoading(true);
       setGitError(null);
@@ -207,11 +205,6 @@ function App() {
     };
     fetchGitUser();
   }, [gitUsername]);
-
-  const handleGitSubmit = (e) => {
-    e.preventDefault();
-    if (tempUsername.trim()) setGitUsername(tempUsername.trim());
-  };
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
@@ -339,7 +332,7 @@ function App() {
             </div>
             
             <div className="hero-socials-grid">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="social-pill">
+              <a href="https://github.com/krutiktikam7" target="_blank" rel="noopener noreferrer" className="social-pill">
                 GitHub
               </a>
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-pill">
@@ -476,18 +469,6 @@ function App() {
           {/* Git Metrics */}
           <div className="behance-card" id="git-metrics-card">
             <span className="section-label">Live Git Monitor</span>
-            
-            {/* User selector input */}
-            <form onSubmit={handleGitSubmit} className="github-metric-search">
-              <input 
-                type="text" 
-                value={tempUsername} 
-                onChange={(e) => setTempUsername(e.target.value)}
-                placeholder="Enter GitHub username..." 
-                className="github-metric-search-input"
-              />
-              <button type="submit" className="btn-pill" style={{ padding: '8px 16px' }}>Fetch</button>
-            </form>
 
             {gitLoading && (
               <div className="github-metric-spinner">
@@ -497,7 +478,7 @@ function App() {
 
             {gitError && (
               <div className="github-metric-error">
-                ⚠️ User not found or rate limited.
+                ⚠️ Connection limit reached. Showing offline cached data.
               </div>
             )}
 
