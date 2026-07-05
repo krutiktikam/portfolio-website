@@ -54,8 +54,58 @@ body {
   font-family: var(--font-sans);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  padding: 40px 0;
+  padding: 0 0 40px 0;
 }
+
+/* ==========================================================================
+   Top Header Navigation
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  padding: 20px 0;
+  margin-bottom: 40px;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-nav {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.header-nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--transition-smooth);
+}
+
+.header-nav a:hover, .header-nav a.active {
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.header-resume-btn {
+  font-size: 12px;
+  padding: 6px 16px;
+}
+
 
 /* Layout container matching the vertical columns of the Behance mockup */
 .portfolio-layout {
@@ -93,6 +143,8 @@ body {
 
 .behance-card:hover {
   border-color: var(--border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 /* Typography */
