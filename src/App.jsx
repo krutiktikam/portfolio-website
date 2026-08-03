@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import aboutBgImg from './assets/about_bg.jpg';
 import spotlightImg from './assets/spotlight.jpg';
 import './App.css';
@@ -9,7 +9,7 @@ const TiltCard = ({ children, id, className, onClick, style = {} }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e) => {
-    // Disable tilt physics on touch devices (phones/tablets) to preserve fluid scrolling
+    // Disable tilt physics on touch devices to preserve fluid scrolling
     if (window.matchMedia("(pointer: coarse)").matches) return;
     
     const rect = e.currentTarget.getBoundingClientRect();
@@ -59,92 +59,107 @@ const TiltCard = ({ children, id, className, onClick, style = {} }) => {
   );
 };
 
-// Projects dataset with detailed Case-Study structures matching your resume
+// Engineering Projects Portfolio (STRICT METRICS REQUIRED)
 const projectsData = [
   {
-    title: "Blender Robotic Arm Simulation",
-    description: "High-fidelity 3D robotic arm simulation controlled programmatically. Implemented closed-loop trajectory tracking and automatic knuckle contact grasp lock.",
-    tech: ["Python", "Blender API", "Control Systems", "Physics Baking"],
-    gitUrl: "https://github.com/krutiktikam/blender-robotic-arm-simulation",
-    problem: "Developing and testing robotic control algorithms directly on physical arms poses high risks of hardware damage and lacks quick, repeatable telemetry logging.",
-    architecture: "Engineered a programmatically baked 3D robotic arm simulation environment using Blender API. Developed custom feedback controllers (P-control) for joint waypoint tracking, along with a knuckle-contact raycast detector to automatically lock joints on object collision.",
-    mlApproach: "Integrated an OpenAI Gymnasium environment wrapper enclosing the simulation scene. Used the Stable-Baselines3 library to train continuous action-space Reinforcement Learning policies using PPO (Proximal Policy Optimization)."
-  },
-  {
-    title: "Football Any-latics Pro",
-    description: "Ingests live data via automated ETL pipelines for real-time XGBoost probability forecasting and sports match predictions.",
-    tech: ["Python", "XGBoost", "Streamlit", "Pandas", "REST APIs"],
-    gitUrl: "https://github.com/krutiktikam/footbal-anylatics-project",
-    problem: "Sports prediction dashboards are frequently delayed by high data cleaning processing overhead and rarely support live-in-play win-probability updates.",
-    architecture: "Architected an automated Python ETL data collection pipeline. It queries sports match schedules and player stats from open REST APIs, cleans raw JSON streams, and structures the records into a relational database.",
-    mlApproach: "Trained an XGBoost model on historical match datasets to forecast live match win probabilities. Built a web-based dashboard using Streamlit to display match metrics and render predictions."
-  },
-  {
-    title: "PokéArchitect",
-    description: "Decoupled high-fidelity web platform featuring a Scikit-Learn clustering model for archetype discovery and similarity scoring.",
-    tech: ["FastAPI", "React", "PostgreSQL", "Supabase", "Scikit-Learn"],
-    gitUrl: "https://github.com/krutiktikam/poke-architect",
-    problem: "Simulated balancing systems require matching and grouping 1,000+ data profiles into coherent archetypes in real-time.",
-    architecture: "Built a decoupled web application utilizing a fast, asynchronous FastAPI backend and a responsive React/Vite frontend secured with strict CORS and origin validation controls.",
-    mlApproach: "Developed an analytical heuristic engine utilizing Scikit-Learn. It clusters data profiles into distinct archetypes using K-Means Clustering and runs Cosine Similarity comparison tests to generate recommendations."
-  },
-  {
-    title: "PokéMarket",
-    description: "Institutional-grade trading terminal featuring a Gemini Vision AI card scanning pipeline and 30-day linear regression price projections.",
-    tech: ["Next.js 15", "TypeScript", "Gemini Vision AI", "Supabase", "Recharts"],
-    gitUrl: "https://github.com/krutiktikam/poke-hodl",
-    problem: "Evaluating physical collector assets traditionally requires manual card data entry, resulting in human valuation errors.",
-    architecture: "Designed a trading terminal leveraging Next.js 15 (App Router) and TypeScript. Integrates a visual scanning pipeline connected to Google Gemini Vision AI to recognize cards from live camera photos.",
-    mlApproach: "Combines Gemini's zero-shot image classification models with linear regression algorithms to project 30-day card market value fluctuations, plotted via responsive Recharts graphs."
-  },
-  {
-    title: "OmniMath-Local",
-    description: "Enterprise async backend pipeline serving mathematical workflows with math-aware semantic search indexing via ChromaDB.",
-    tech: ["FastAPI", "ChromaDB", "Pydantic", "SymPy"],
-    gitUrl: "https://github.com/krutiktikam/omni-math",
-    problem: "Standard text search engines fail to parse math-heavy documents, resulting in low lookup accuracy for scientific equations.",
-    architecture: "Created an enterprise-grade async backend using FastAPI and SymPy for symbolic math verification. Integrated a local RAG vector search database to find math concepts.",
-    mlApproach: "Implemented semantic vector search using ChromaDB. Developed custom mathematical chunking parameters and validated incoming workflows using strict Pydantic schemas."
-  },
-  {
-    title: "NeuroRehab-BCI",
-    description: "End-to-end signal processing pipeline classifying motor imagery EEG signals using an EEGNet model and LSL streaming simulation.",
-    tech: ["PyTorch", "EEGNet", "LSL (Lab Streaming Layer)", "FastAPI"],
+    title: "NeuroRehab-BCI (Motor Imagery EEG Classifier)",
+    category: "AI & ML",
+    description: "End-to-end signal processing pipeline classifying EEG signals (22 channels x 1001 time points). Applied a 5th-order Butterworth bandpass filter.",
+    tech: ["PyTorch", "EEGNet", "Signal Processing", "Python"],
     gitUrl: "https://github.com/krutiktikam/BCI-MotorImagery-Pipeline",
-    problem: "Brain-Computer Interface applications require real-time signal classification of noisy EEG streams with sub-second latencies.",
-    architecture: "Designed a signal processing pipeline in PyTorch. Simulates live neural signals by streaming EEG datasets using the LSL (Lab Streaming Layer) protocol.",
-    mlApproach: "Processes and classifies active motor imagery brain states (like imagining hand movement) using an EEGNet neural network model, communicating inferences via a fast FastAPI local socket."
+    problem: "Brain-Computer Interface applications require real-time neural signal processing and classification of noisy multi-channel EEG streams with high sub-second precision.",
+    architecture: "Designed an end-to-end multi-channel signal processing pipeline in PyTorch. Filtered raw 22-channel x 1001-time-point neural recordings using a 5th-order Butterworth bandpass filter.",
+    mlApproach: "Trained an EEGNet deep neural network architecture to classify active motor imagery brain states with sub-second inference latency.",
+    metricText: "Optimized architecture to increase Subject 1 validation accuracy from 25.00% to 56.00% within 10 epochs."
+  },
+  {
+    title: "OmniMath-Local (Async Vector RAG Platform)",
+    category: "Backend & Vector Search",
+    description: "Enterprise-grade async backend serving math verification workflows.",
+    tech: ["FastAPI", "ChromaDB", "Pydantic", "Python"],
+    gitUrl: "https://github.com/krutiktikam/omni-math",
+    problem: "Standard text search engines fail to parse math-heavy documents, resulting in high latency and low lookup accuracy for complex scientific equations.",
+    architecture: "Created an enterprise-grade async backend using FastAPI and Pydantic schema validation. Integrated a local RAG vector search database powered by ChromaDB.",
+    mlApproach: "Implemented semantic vector search using all-MiniLM-L6-v2 dense embeddings. Developed 1,000-character custom text chunking parameters and 250-chunk async upsert minibatches.",
+    metricText: "Indexed 12,387 documents using all-MiniLM-L6-v2 embeddings. Optimized throughput using 250-chunk asynchronous upsert minibatches and 1,000-character custom text chunking."
+  },
+  {
+    title: "Blender Robotic Arm Simulation (RL Control System)",
+    category: "Robotics & RL",
+    description: "Headless continuous-control simulation environment for policy optimization.",
+    tech: ["Python", "PyTorch", "PPO", "OpenAI Gym"],
+    gitUrl: "https://github.com/krutiktikam/blender-robotic-arm-simulation",
+    problem: "Developing and testing robotic control algorithms directly on physical hardware poses risks of damage and suffers from slow rendering frame rate bottlenecks.",
+    architecture: "Engineered a headless continuous-control 3D robotic arm simulation environment using Blender API scripts wrapped in an OpenAI Gymnasium interface.",
+    mlApproach: "Trained Proximal Policy Optimization (PPO) reinforcement learning agents in PyTorch across 10,000 timesteps with complex continuous reward functions.",
+    metricText: "Achieved ultra-fast execution speeds of 700-850 FPS. Trained a PPO policy across 10,000 timesteps with complex continuous reward functions."
+  },
+  {
+    title: "Football Any-latics Pro (Automated ETL & Prediction)",
+    category: "Data Pipelines & ETL",
+    description: "Automated data ingestion and ETL pipeline for high-frequency streaming data.",
+    tech: ["Python", "XGBoost", "Streamlit", "PostgreSQL"],
+    gitUrl: "https://github.com/krutiktikam/footbal-anylatics-project",
+    problem: "Sports analytics systems suffer from data cleaning latency and noise during live-in-play match events, degrading win-probability updates.",
+    architecture: "Architected an automated Python ETL data ingestion pipeline connected to PostgreSQL to ingest, normalize, and query high-frequency match telemetry.",
+    mlApproach: "Trained an XGBoost model on historical and live streaming datasets to forecast real-time win probabilities, visualized on an interactive Streamlit web dashboard.",
+    metricText: "Trained XGBoost pipeline computing live win probabilities, performing within 10.00% of live market odds based on Brier Score and Log Loss."
   }
 ];
 
-// Experience timeline details from your resume
+const categoriesList = ["All", "AI & ML", "Backend & Vector Search", "Robotics & RL", "Data Pipelines & ETL"];
+
+// Professional Experience timeline with key metrics
 const experienceData = [
   { 
     year: "Dec 2025 - Feb 2026", 
-    company: "Talent Corner HR Services Pvt. Ltd.", 
-    role: "Full-Stack Developer Intern", 
+    company: "Talent Corner HR Services Private Limited", 
+    role: "Software Engineering Intern", 
     duration: "3 months",
-    details: "Developed responsive FastAPI and JS applications, optimizing database schemas in PostgreSQL to reduce applicant search latencies." 
+    metrics: [
+      "Architected and optimized PostgreSQL schemas to manage a dense dataset of 60,000+ detailed professional profiles, drastically minimizing search latency.",
+      "Engineered asynchronous REST APIs via FastAPI to power dynamic authentication and automated document generation pipelines."
+    ] 
   },
   { 
     year: "2023 - 2026", 
     company: "Nagandas Khandwala College", 
     role: "B.Sc. Computer Science (AI & ML Specialization)", 
     duration: "Degree (CGPA: 7.5)",
-    details: "Focus: Data Structures, Neural Networks, Database Systems, Distributed Web Architecture." 
+    metrics: [
+      "Focus: Asynchronous APIs, Production-Ready ML, Vector Search Indexing, Signal Processing, and System Architecture."
+    ] 
   }
 ];
 
-// Certifications from your resume
-const certificationsData = [
-  { category: "Cloud & Generative AI", items: ["AWS: Data Engineering for Generative AI Applications", "AWS: Connecting Systems & Machines for Manufacturing", "Microsoft Azure Cloud Computing SDP"] },
-  { category: "ML & Data Science", items: ["DeepLearning.AI Machine Learning Specialization", "TensorFlow Developer Professional Certificate"] },
-  { category: "Web Development", items: ["Meta Front-End Developer Professional Certificate", "Responsive Web Design (freeCodeCamp)"] }
+// Technical Skills Matrix grouped cleanly into categories
+const skillsCategories = [
+  {
+    title: "AI & Machine Learning",
+    items: ["PyTorch", "XGBoost", "Scikit-Learn", "Vector Search (ChromaDB)", "Signal Processing", "LLM Integration", "Reinforcement Learning"]
+  },
+  {
+    title: "Systems & Backend",
+    items: ["Python", "FastAPI (Async)", "PostgreSQL", "SQLite", "RESTful APIs", "System Architecture"]
+  },
+  {
+    title: "DevOps & MLOps",
+    items: ["Docker", "Git/GitHub Actions", "CI/CD", "AWS"]
+  }
+];
+
+// Certifications Section Badges
+const certificationsList = [
+  "AWS Data Engineering for Generative AI Applications",
+  "AWS Connecting Systems and Machines for Industrial Manufacturing",
+  "DeepLearning.AI Machine Learning Specialization",
+  "TensorFlow Developer Certificate"
 ];
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
-  const [gitUsername] = useState('krutiktikam'); // Static profile username
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [gitUsername] = useState('krutiktikam');
   const [gitUserData, setGitUserData] = useState(null);
   const [gitLoading, setGitLoading] = useState(false);
   const [gitError, setGitError] = useState(null);
@@ -159,6 +174,32 @@ function App() {
   // Modals States
   const [selectedProject, setSelectedProject] = useState(null);
   const [showResumeModal, setShowResumeModal] = useState(false);
+  const [showCliModal, setShowCliModal] = useState(false);
+
+  // CLI Terminal State
+  const [cliInput, setCliInput] = useState('');
+  const [cliHistory, setCliHistory] = useState([
+    { cmd: 'welcome', response: 'Krutik Developer CLI v2.0 — AI & ML Systems Terminal [Type "help" for commands. Shortcut: Ctrl+K / Cmd+K]' }
+  ]);
+
+  const cliBodyRef = useRef(null);
+
+  // Filter projects based on active category
+  const filteredProjects = activeCategory === 'All'
+    ? projectsData
+    : projectsData.filter(p => p.category === activeCategory);
+
+  // Keyboard shortcut (Ctrl+K or Cmd+K) to open CLI Modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setShowCliModal(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Mouse move and hover trackers for custom cursor
   useEffect(() => {
@@ -174,6 +215,7 @@ function App() {
                             target.closest('.btn-pill') || 
                             target.closest('.btn-circle') || 
                             target.closest('.social-pill') ||
+                            target.closest('.filter-pill') ||
                             target.closest('input') ||
                             target.closest('textarea');
       setIsHoveringInteractive(!!isInteractive);
@@ -190,7 +232,7 @@ function App() {
   // Active navigation scroll-spy
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['landing', 'about-card', 'projects-list', 'git-metrics-card', 'contacts-card'];
+      const sections = ['landing', 'about-card', 'work-card', 'projects-list', 'git-metrics-card', 'contacts-card'];
       const scrollPosition = window.scrollY + 250;
 
       for (const section of sections) {
@@ -210,27 +252,24 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fetch GitHub Details with dynamic metrics processing and static resume fallback
+  // Fetch GitHub Details with dynamic metrics processing
   useEffect(() => {
     const fetchGitUser = async () => {
       setGitLoading(true);
       setGitError(null);
       try {
-        // 1. Fetch User Profile info
         const profileRes = await fetch(`https://api.github.com/users/${gitUsername}`);
         if (!profileRes.ok) {
           throw new Error('User profile request rate limited or not found');
         }
         const profileData = await profileRes.json();
 
-        // 2. Fetch User Repos list
         const reposRes = await fetch(`https://api.github.com/users/${gitUsername}/repos?per_page=100`);
         let reposData = [];
         if (reposRes.ok) {
           reposData = await reposRes.json();
         }
 
-        // 3. Process repository statistics
         let totalStars = 0;
         let totalForks = 0;
         const langCounts = {};
@@ -243,7 +282,6 @@ function App() {
           }
         });
 
-        // Structure top languages percentages
         const totalLangs = Object.values(langCounts).reduce((a, b) => a + b, 0);
         const languages = Object.entries(langCounts)
           .map(([name, count]) => ({
@@ -257,7 +295,7 @@ function App() {
           login: profileData.login,
           name: profileData.name || profileData.login,
           avatar_url: profileData.avatar_url,
-          bio: profileData.bio || "Full-stack developer.",
+          bio: profileData.bio || "AI Software Engineer & ML Systems Developer.",
           public_repos: profileData.public_repos,
           followers: profileData.followers,
           following: profileData.following,
@@ -268,13 +306,12 @@ function App() {
           isMock: false
         });
       } catch (err) {
-        console.warn("GitHub rate limit or connection error, falling back to local resume profile stats.", err);
-        // Resilient fallback utilizing Krutik Tikam's actual resume skills representation
+        console.warn("GitHub rate limit or connection error, falling back to local engineer profile stats.", err);
         setGitUserData({
           login: "krutiktikam",
           name: "Krutik Tikam",
           avatar_url: "https://avatars.githubusercontent.com/u/132470725?v=4",
-          bio: "Full-Stack Developer & AI/ML Engineer. Next.js 15, FastAPI, PostgreSQL, Python.",
+          bio: "AI Software Engineer | ML Systems Developer | Backend Architect. PyTorch, FastAPI, ChromaDB, PostgreSQL.",
           public_repos: 14,
           followers: 24,
           following: 16,
@@ -282,10 +319,10 @@ function App() {
           totalStars: 18,
           totalForks: 8,
           languages: [
-            { name: "Python", percentage: 55 },
-            { name: "TypeScript", percentage: 20 },
-            { name: "JavaScript", percentage: 15 },
-            { name: "Go", percentage: 10 }
+            { name: "Python", percentage: 65 },
+            { name: "FastAPI / JS", percentage: 20 },
+            { name: "C++ / Systems", percentage: 10 },
+            { name: "SQL", percentage: 5 }
           ],
           isMock: true
         });
@@ -305,9 +342,60 @@ function App() {
     }
   };
 
+  // Process CLI Terminal Commands
+  const handleCliSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = cliInput.trim().toLowerCase();
+    if (!trimmed) return;
+
+    let resp = '';
+    switch (trimmed) {
+      case 'help':
+        resp = 'Available commands:\n• bio           : Summary overview\n• skills        : Technical skills matrix\n• experience    : Professional work history & metrics\n• projects      : Featured ML & Systems projects\n• certifications: Industry certifications\n• resume        : Open resume PDF reader\n• contact       : Display contact details\n• clear         : Clear console history';
+        break;
+      case 'bio':
+        resp = 'Krutik Tikam — AI Software Engineer | ML Systems Developer | Backend Architect.\nBridging the gap between theoretical machine learning and decoupled, high-performance backend infrastructure.';
+        break;
+      case 'skills':
+        resp = 'AI & ML: PyTorch, XGBoost, Scikit-Learn, Vector Search (ChromaDB), Signal Processing, LLM Integration, Reinforcement Learning\nSystems & Backend: Python, FastAPI (Async), PostgreSQL, SQLite, RESTful APIs, System Architecture\nDevOps & MLOps: Docker, Git/GitHub Actions, CI/CD, AWS';
+        break;
+      case 'experience':
+        resp = 'Software Engineering Intern @ Talent Corner HR Services Private Limited (Dec 2025 - Feb 2026)\n• Architected and optimized PostgreSQL schemas for 60,000+ detailed professional profiles.\n• Engineered asynchronous REST APIs via FastAPI for authentication and automated document generation pipelines.';
+        break;
+      case 'projects':
+        resp = projectsData.map(p => `• ${p.title}\n  Metric: ${p.metricText}\n  URL: ${p.gitUrl}`).join('\n\n');
+        break;
+      case 'certifications':
+        resp = certificationsList.map(c => `• ${c}`).join('\n');
+        break;
+      case 'resume':
+        resp = 'Opening resume PDF viewer...';
+        setShowResumeModal(true);
+        break;
+      case 'contact':
+        resp = 'Email: krutiktikam7@gmail.com | Phone: +91 9284236446\nLinkedIn: linkedin.com/in/krutik-tikam-95339b286\nGitHub: github.com/krutiktikam';
+        break;
+      case 'clear':
+        setCliHistory([]);
+        setCliInput('');
+        return;
+      default:
+        resp = `Command not recognized: "${trimmed}". Type "help" for a list of available commands.`;
+    }
+
+    setCliHistory(prev => [...prev, { cmd: trimmed, response: resp }]);
+    setCliInput('');
+
+    setTimeout(() => {
+      if (cliBodyRef.current) {
+        cliBodyRef.current.scrollTop = cliBodyRef.current.scrollHeight;
+      }
+    }, 50);
+  };
+
   return (
     <>
-      {/* Custom Circular Cursor elements with inline pointer-events: none safety override */}
+      {/* Custom Circular Cursor elements */}
       <div 
         className="cursor-dot" 
         style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px`, pointerEvents: 'none' }}
@@ -342,6 +430,15 @@ function App() {
             </li>
             <li>
               <a 
+                href="#work-card" 
+                className={activeSection === 'work-card' ? 'active' : ''}
+                id="nav-link-experience"
+              >
+                experience
+              </a>
+            </li>
+            <li>
+              <a 
                 href="#projects-list" 
                 className={activeSection === 'projects-list' ? 'active' : ''}
                 id="nav-link-projects"
@@ -368,28 +465,61 @@ function App() {
               </a>
             </li>
           </ul>
-          <button 
-            onClick={() => setShowResumeModal(true)} 
-            className="btn-pill header-resume-btn" 
-            id="btn-header-resume"
-          >
-            resume
-          </button>
+
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button 
+              onClick={() => setShowCliModal(true)}
+              className="btn-pill"
+              style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '12px', padding: '6px 14px' }}
+              title="Open Developer Terminal (Shortcut: Ctrl+K)"
+              id="btn-header-cli"
+            >
+              &gt;_ CLI
+            </button>
+            <button 
+              onClick={() => setShowResumeModal(true)} 
+              className="btn-pill header-resume-btn" 
+              id="btn-header-resume"
+            >
+              resume
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* New Landing Screen Section */}
+      {/* Hero Section (Landing Page) */}
       <section className="landing-screen" id="landing">
         <h1 className="landing-title">Krutik Tikam</h1>
-        <span className="landing-subtitle">Full-Stack Developer & AI/ML Engineer</span>
+        <span className="landing-subtitle">AI Software Engineer | ML Systems Developer | Backend Architect</span>
         
         <p className="landing-tagline">
-          Analytical developer building scalable web architectures, optimized backend routing, and predictive signal processing pipelines using Next.js 15, FastAPI, PostgreSQL, and Python.
+          Bridging the gap between theoretical machine learning and decoupled, high-performance backend infrastructure.
         </p>
         
-        <div className="landing-action">
-          <a href="#about-card" className="btn-pill" id="btn-landing-enter">Explore Portfolio</a>
-          <a href="#about-card" className="btn-circle">↓</a>
+        <div className="landing-action" style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
+          <a href="#projects-list" className="btn-pill" id="btn-landing-projects">
+            View Engineering Projects
+          </a>
+          <a 
+            href="https://github.com/krutiktikam" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="btn-pill" 
+            style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+            id="btn-landing-github"
+          >
+            GitHub Profile ↗
+          </a>
+          <a 
+            href="https://www.linkedin.com/in/krutik-tikam-95339b286/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="btn-pill" 
+            style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+            id="btn-landing-linkedin"
+          >
+            LinkedIn ↗
+          </a>
         </div>
         
         <span className="scroll-indicator">scroll down</span>
@@ -401,7 +531,7 @@ function App() {
             COLUMN 1: Intro, Spotlight & About
             ========================================== */}
         <div className="portfolio-column">
-          {/* Profile Card */}
+          {/* Profile Header Card */}
           <TiltCard id="profile-card">
             <div className="hero-header">
               <span className="logo">Overview</span>
@@ -412,12 +542,12 @@ function App() {
             </div>
             
             <h1 className="hero-main-title">
-              <span>Full-Stack</span>
+              <span>AI Software</span>
               <span className="underlined">Engineer</span>
             </h1>
             
             <p className="hero-bio">
-              Experienced in developing decoupled async REST APIs, real-time analytics dashboards, and automated ETL workflows to deploy high-performance, user-centric systems.
+              Engineering high-throughput Asynchronous APIs, Production-Ready ML infrastructure, Vector Search indexing, and robust System Architecture.
             </p>
             
             <div className="hero-action">
@@ -445,56 +575,56 @@ function App() {
           <TiltCard 
             className="spotlight-card" 
             style={{ backgroundImage: `linear-gradient(rgba(13,13,16,0.85), rgba(13,13,16,0.95)), url(${spotlightImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            onClick={() => setSelectedProject(projectsData[0])}
+            onClick={() => setSelectedProject(projectsData[1])}
           >
-            <span className="section-label">spotlight project</span>
-            <h2 className="spotlight-title">Blender Robotic Arm Simulation</h2>
-            <p className="spotlight-desc">High-fidelity 3D robotic arm simulation controlled programmatically. Implemented closed-loop trajectory tracking.</p>
+            <span className="section-label">spotlight engineering project</span>
+            <h2 className="spotlight-title">{projectsData[1].title}</h2>
+            <p className="spotlight-desc">{projectsData[1].description}</p>
+            <div className="impact-metric-box" style={{ background: 'rgba(0,0,0,0.5)', borderColor: 'rgba(0,242,254,0.4)', marginTop: '8px', marginBottom: '14px' }}>
+              <div className="impact-metric-text" style={{ fontSize: '12px' }}>
+                <strong>{projectsData[1].metricText}</strong>
+              </div>
+            </div>
             <div className="spotlight-action">
               <button className="btn-pill" style={{ pointerEvents: 'none' }}>Read Case Study</button>
               <span className="btn-circle">→</span>
             </div>
           </TiltCard>
 
-          {/* About Me & Tech Stack */}
+          {/* "About Me" Section */}
           <TiltCard id="about-card">
             <span className="section-label">/About me ...</span>
             <p className="about-desc">
-              B.Sc. Computer Science student specializing in Artificial Intelligence and Machine Learning. Passionate about solving complex architectural scaling and predictive data pipeline challenges.
+              I am an AI Software Engineer specializing in the intersection of machine learning and backend architecture. My core strength lies in engineering the robust infrastructure required to deploy AI into the real world. My technical expertise spans asynchronous REST APIs (FastAPI), deep learning (PyTorch), continuous control reinforcement learning (PPO), and advanced vector database indexing (ChromaDB) for RAG applications. I focus on optimizing system throughput, minimizing search latency, and building automated ETL pipelines.
             </p>
             
             <div className="about-portrait-container" id="about-visual-asset">
-              <img src={aboutBgImg} alt="BCI Neural Network Abstract Art" className="about-portrait" />
+              <img src={aboutBgImg} alt="AI Systems Abstract Representation" className="about-portrait" />
             </div>
-            
+
+            <span className="section-label" style={{ marginBottom: '12px', display: 'block' }}>Technical Skills Matrix</span>
             <div className="skills-stack-list">
-              <div className="skill-category-block">
-                <h4 className="skill-cat-title">Frontend</h4>
-                <p className="skill-cat-content">React / Next.js 15 (App Router) / TypeScript / JavaScript / Tailwind CSS / Recharts (D3.js) / Framer Motion</p>
-              </div>
-              <div className="skill-category-block">
-                <h4 className="skill-cat-title">Backend & Databases</h4>
-                <p className="skill-cat-content">FastAPI (Async) / Node.js / Python / PostgreSQL (Supabase) / SQL Alchemy / SQLite / RESTful APIs</p>
-              </div>
-              <div className="skill-category-block">
-                <h4 className="skill-cat-title">Data Analytics & ML</h4>
-                <p className="skill-cat-content">Pandas / NumPy / Scikit-Learn (K-Means, Cosine Similarity) / XGBoost / ETL Pipelines / ChromaDB / Data Visualizations</p>
-              </div>
-              <div className="skill-category-block">
-                <h4 className="skill-cat-title">DevOps & Tools</h4>
-                <p className="skill-cat-content">Git / GitHub / Docker / Vercel / Render / Postman / Lab Streaming Layer (LSL) / Blender API</p>
-              </div>
+              {skillsCategories.map((cat, idx) => (
+                <div key={idx} className="skill-category-block">
+                  <h4 className="skill-cat-title">{cat.title}</h4>
+                  <div className="skill-matrix-tags">
+                    {cat.items.map((skill, sIdx) => (
+                      <span key={sIdx} className="skill-matrix-pill">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </TiltCard>
         </div>
 
         {/* ==========================================
-            COLUMN 2: Experience & Projects Catalog
+            COLUMN 2: Experience & Projects Portfolio
             ========================================== */}
         <div className="portfolio-column">
-          {/* Work experience */}
+          {/* Professional Experience Section */}
           <TiltCard id="work-card">
-            <span className="section-label" style={{ textAlign: 'right', display: 'block' }}>Experience & Education</span>
+            <span className="section-label" style={{ textAlign: 'right', display: 'block' }}>Professional Experience</span>
             
             <div className="work-timeline">
               {experienceData.map((item, idx) => (
@@ -504,38 +634,50 @@ function App() {
                     <span className="timeline-company">{item.company}</span>
                     <span className="timeline-role">{item.role}</span>
                     <span className="timeline-duration">{item.duration}</span>
-                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                      {item.details}
-                    </p>
+                    <ul style={{ listStyle: 'disc', paddingLeft: '16px', fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {item.metrics.map((m, mIdx) => (
+                        <li key={mIdx}>{m}</li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               ))}
             </div>
           </TiltCard>
 
-          {/* Certifications Card */}
+          {/* Certifications Section */}
           <TiltCard id="certifications-card">
             <span className="section-label">Certifications</span>
-            <div className="skills-stack-list" style={{ marginTop: '8px' }}>
-              {certificationsData.map((cert, idx) => (
-                <div key={idx} className="skill-category-block">
-                  <h4 className="skill-cat-title">{cert.category}</h4>
-                  <ul style={{ listStyle: 'none', fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '6px' }}>
-                    {cert.items.map((item, iIdx) => (
-                      <li key={iIdx}>• {item}</li>
-                    ))}
-                  </ul>
+            <div className="cert-badge-list">
+              {certificationsList.map((cert, idx) => (
+                <div key={idx} className="cert-badge-item">
+                  <span className="cert-icon-dot"></span>
+                  <span className="cert-name">{cert}</span>
                 </div>
               ))}
             </div>
           </TiltCard>
 
-          {/* Projects List Catalog */}
+          {/* Engineering Projects Portfolio */}
           <div id="projects-list">
-            <h2 className="section-label" style={{ paddingLeft: '20px' }}>... /Projects ...</h2>
+            <h2 className="section-label" style={{ paddingLeft: '20px' }}>... /Engineering Projects ...</h2>
             
-            {projectsData.map((project, idx) => {
-              const elementId = project.title.toLowerCase().replace(/\s+/g, '-');
+            {/* Category Filter Bar */}
+            <div className="project-filter-bar" id="project-filter-tabs">
+              {categoriesList.map((cat, cIdx) => (
+                <button
+                  key={cIdx}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`filter-pill ${activeCategory === cat ? 'active' : ''}`}
+                  id={`filter-tab-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {filteredProjects.map((project, idx) => {
+              const elementId = project.title.toLowerCase().replace(/[^a-z0-9]/g, '-');
               return (
                 <TiltCard 
                   key={idx} 
@@ -552,6 +694,13 @@ function App() {
                   
                   <p className="project-card-desc">{project.description}</p>
                   
+                  <div className="impact-metric-box">
+                    <div className="impact-metric-header">Impact Metric</div>
+                    <div className="impact-metric-text">
+                      <strong>{project.metricText}</strong>
+                    </div>
+                  </div>
+
                   <div className="project-card-actions">
                     <div className="project-card-action-links">
                       <button className="btn-pill" style={{ padding: '6px 14px', fontSize: '11px', pointerEvents: 'none' }}>View Case Study</button>
@@ -586,20 +735,18 @@ function App() {
 
             {gitUserData && !gitLoading && (
               <div>
-                {/* Profile Block */}
                 <div className="github-profile-block">
                   <img src={gitUserData.avatar_url} alt="GitHub avatar" className="github-profile-avatar" />
                   <div className="github-profile-info">
                     <span className="github-profile-name">{gitUserData.name || gitUsername}</span>
                     <a href={gitUserData.html_url} target="_blank" rel="noopener noreferrer" className="github-profile-login">
                       @{gitUserData.login}
-                  </a>
+                    </a>
                   </div>
                 </div>
                 
                 {gitUserData.bio && <p className="github-profile-bio">{gitUserData.bio}</p>}
 
-                {/* Stats Counters */}
                 <div className="github-stats-row">
                   <div className="github-stat-cell">
                     <span className="github-stat-value">{gitUserData.public_repos}</span>
@@ -619,7 +766,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Native Custom Language distribution bar chart */}
                 <div className="github-metrics-container">
                   <div className="github-chart-card">
                     <h4 className="github-chart-title">Repo Languages Distribution</h4>
@@ -641,10 +787,9 @@ function App() {
                   </div>
                 </div>
 
-                {/* Resilient Cache Notice */}
                 {gitUserData.isMock && (
                   <p className="github-rate-limit-notice">
-                    * Displaying resume data metrics (GitHub API Rate limit reached)
+                    * Displaying cached engineer profile metrics (GitHub API Rate limit reached)
                   </p>
                 )}
               </div>
@@ -664,7 +809,7 @@ function App() {
             
             <p className="contacts-attribution">
               Site Handcrafted by ME /<br />
-              Inspired by Behance /<br />
+              Inspired by Behance & Engineering Systems /<br />
               Powered by React & Vite
             </p>
             
@@ -673,7 +818,6 @@ function App() {
               <span className="contacts-last-name">Krutik Tikam</span>
             </div>
 
-            {/* Clean minimal message form */}
             <form onSubmit={handleContactSubmit} className="contacts-grid">
               <div className="contact-form-group">
                 <label htmlFor="contacts-name">Name</label>
@@ -754,7 +898,7 @@ function App() {
               </div>
 
               <div className="modal-section">
-                <h4 className="modal-section-title">The Architecture</h4>
+                <h4 className="modal-section-title">System Architecture</h4>
                 <p className="modal-section-content" style={{ marginTop: '8px' }}>
                   {selectedProject.architecture}
                 </p>
@@ -766,16 +910,26 @@ function App() {
                   {selectedProject.mlApproach}
                 </p>
               </div>
+
+              <div className="modal-section">
+                <h4 className="modal-section-title">Verified Impact Metric</h4>
+                <div className="impact-metric-box" style={{ marginTop: '8px' }}>
+                  <div className="impact-metric-header">Production Benchmark</div>
+                  <div className="impact-metric-text">
+                    <strong>{selectedProject.metricText}</strong>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div style={{ marginTop: '36px', display: 'flex', gap: '16px' }}>
+            <div style={{ marginTop: '36px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <a 
                 href={selectedProject.gitUrl} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="btn-pill"
               >
-                View Repository Code
+                View Repository Code ↗
               </a>
               <button 
                 className="btn-pill" 
@@ -824,6 +978,50 @@ function App() {
               >
                 Close Reader
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Developer CLI Terminal Modal */}
+      {showCliModal && (
+        <div className="modal-backdrop" onClick={() => setShowCliModal(false)}>
+          <div className="cli-terminal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="cli-terminal-header">
+              <div className="cli-dots">
+                <span className="cli-dot cli-dot-red" onClick={() => setShowCliModal(false)} style={{ cursor: 'pointer' }}></span>
+                <span className="cli-dot cli-dot-yellow"></span>
+                <span className="cli-dot cli-dot-green"></span>
+              </div>
+              <span className="cli-title">krutik@portfolio:~ (zsh)</span>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Ctrl+K to toggle</span>
+            </div>
+
+            <div className="cli-body" ref={cliBodyRef}>
+              <div className="cli-history">
+                {cliHistory.map((item, idx) => (
+                  <div key={idx} className="cli-line">
+                    {item.cmd !== 'welcome' && (
+                      <div className="cli-prompt-line">
+                        krutik@portfolio ~ % <span>{item.cmd}</span>
+                      </div>
+                    )}
+                    <div className="cli-response">{item.response}</div>
+                  </div>
+                ))}
+              </div>
+
+              <form onSubmit={handleCliSubmit} className="cli-input-form">
+                <span style={{ color: '#10b981' }}>krutik@portfolio ~ %</span>
+                <input 
+                  type="text" 
+                  value={cliInput}
+                  onChange={(e) => setCliInput(e.target.value)}
+                  placeholder="Type 'help'..." 
+                  className="cli-input"
+                  autoFocus
+                />
+              </form>
             </div>
           </div>
         </div>

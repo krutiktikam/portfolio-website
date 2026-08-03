@@ -3,50 +3,40 @@ import ProjectCard from './ProjectCard';
 
 const projectsData = [
   {
-    title: "BCI EEG Motor Imagery Classifier",
-    description: "Advanced EEG signal processing and machine learning pipeline to classify motor imagery tasks from Brain-Computer Interface datasets.",
-    tech: ["Python", "MNE", "Scikit-Learn", "SciPy", "EEG Signal Processing"],
-    category: "AI & Signal Processing",
-    gitUrl: "https://github.com/github_username_here/BCI_MI_pjt"
+    title: "NeuroRehab-BCI (Motor Imagery EEG Classifier)",
+    description: "End-to-end signal processing pipeline classifying EEG signals (22 channels x 1001 time points). Applied a 5th-order Butterworth bandpass filter.",
+    tech: ["PyTorch", "EEGNet", "Signal Processing", "Python"],
+    metricText: "Optimized architecture to increase Subject 1 validation accuracy from 25.00% to 56.00% within 10 epochs.",
+    category: "AI & ML",
+    gitUrl: "https://github.com/krutiktikam/BCI-MotorImagery-Pipeline"
   },
   {
-    title: "Poke-Stocks Trading Simulation",
-    description: "An algorithmic trading platform simulating stock markets with Poke-themed assets, executing automated trading strategies.",
-    tech: ["React", "Node.js", "Express", "Chart.js", "Algorithmic Trading"],
-    category: "Finance & Web",
-    gitUrl: "https://github.com/github_username_here/Poke-stocks"
+    title: "OmniMath-Local (Async Vector RAG Platform)",
+    description: "Enterprise-grade async backend serving math verification workflows.",
+    tech: ["FastAPI", "ChromaDB", "Pydantic", "Python"],
+    metricText: "Indexed 12,387 documents using all-MiniLM-L6-v2 embeddings. Optimized throughput using 250-chunk asynchronous upsert minibatches and 1,000-character custom text chunking.",
+    category: "Backend & Vector Search",
+    gitUrl: "https://github.com/krutiktikam/omni-math"
   },
   {
-    title: "Poke-Architect Builder",
-    description: "A system builder and architectural simulation framework exploring complex systems design and simulator modules.",
-    tech: ["Python", "Simulation", "Software Architecture", "Data Structures"],
-    category: "Software Architecture",
-    gitUrl: "https://github.com/github_username_here/poke-architect"
+    title: "Blender Robotic Arm Simulation (RL Control System)",
+    description: "Headless continuous-control simulation environment for policy optimization.",
+    tech: ["Python", "PyTorch", "PPO", "OpenAI Gym"],
+    metricText: "Achieved ultra-fast execution speeds of 700-850 FPS. Trained a PPO policy across 10,000 timesteps with complex continuous reward functions.",
+    category: "Robotics & RL",
+    gitUrl: "https://github.com/krutiktikam/blender-robotic-arm-simulation"
   },
   {
-    title: "Football Data Analytics Engine",
-    description: "A sports analytics dashboard fetching match metrics, running statistical models, and visualizing player performance indices.",
-    tech: ["Python", "Pandas", "Matplotlib", "BeautifulSoup", "Predictive Analytics"],
-    category: "Data Science",
-    gitUrl: "https://github.com/github_username_here/footbal_anylatics_project"
-  },
-  {
-    title: "Blender MCP Tool Integration",
-    description: "A custom Model Context Protocol (MCP) server connecting LLM agents directly with Blender 3D modeling environment API scripts.",
-    tech: ["Python", "Blender API", "MCP", "LLM Integrations", "Automation"],
-    category: "Tools & 3D",
-    gitUrl: "https://github.com/github_username_here/blender_mcp"
-  },
-  {
-    title: "Omnimath Backend API",
-    description: "A high-performance backend mathematical computation engine and REST API supporting advanced calculation pipelines.",
-    tech: ["Go", "Docker", "REST API", "Mathematics", "Unit Testing"],
-    category: "Backend Engineering",
-    gitUrl: "https://github.com/github_username_here/omnimath-backend"
+    title: "Football Any-latics Pro (Automated ETL & Prediction)",
+    description: "Automated data ingestion and ETL pipeline for high-frequency streaming data.",
+    tech: ["Python", "XGBoost", "Streamlit", "PostgreSQL"],
+    metricText: "Trained XGBoost pipeline computing live win probabilities, performing within 10.00% of live market odds based on Brier Score and Log Loss.",
+    category: "Data Pipelines & ETL",
+    gitUrl: "https://github.com/krutiktikam/footbal-anylatics-project"
   }
 ];
 
-const categories = ["All", "AI & Signal Processing", "Finance & Web", "Software Architecture", "Data Science", "Tools & 3D", "Backend Engineering"];
+const categories = ["All", "AI & ML", "Backend & Vector Search", "Robotics & RL", "Data Pipelines & ETL"];
 
 const ProjectGrid = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -56,6 +46,7 @@ const ProjectGrid = () => {
     const matchesCategory = activeCategory === "All" || project.category === activeCategory;
     const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          project.metricText.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           project.tech.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
@@ -63,13 +54,13 @@ const ProjectGrid = () => {
   return (
     <section className="section" id="projects">
       <div className="container">
-        <h2 className="section-title">Showcase <span>Projects</span></h2>
+        <h2 className="section-title">Engineering <span>Projects</span></h2>
         
         {/* Search and Filter Bar */}
         <div className="filters-container glass-panel">
           <input 
             type="text" 
-            placeholder="Search projects by name or technology..." 
+            placeholder="Search projects by name, technology, or metric..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
@@ -82,7 +73,7 @@ const ProjectGrid = () => {
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={`filter-btn ${activeCategory === cat ? 'active' : ''}`}
-                id={`filter-btn-${cat.toLowerCase().replace(/\s+/g, '-')}`}
+                id={`filter-btn-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
               >
                 {cat}
               </button>
@@ -99,13 +90,14 @@ const ProjectGrid = () => {
                 title={proj.title}
                 description={proj.description}
                 tech={proj.tech}
+                metricText={proj.metricText}
                 gitUrl={proj.gitUrl}
                 liveUrl={proj.liveUrl}
               />
             ))
           ) : (
             <div className="no-projects glass-panel" id="no-projects-found">
-              <p>No projects match your search criteria. Try a different search term or category!</p>
+              <p>No engineering projects match your search criteria.</p>
             </div>
           )}
         </div>
