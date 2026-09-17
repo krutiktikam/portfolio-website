@@ -235,7 +235,7 @@ function App() {
           <div className="header-actions-group">
             <button 
               type="button" 
-              className="theme-toggle-btn"
+              className="header-cli-btn"
               onClick={() => setShowCliModal(true)}
               title="Open Terminal (Ctrl+K)"
             >
