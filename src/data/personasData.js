@@ -15,6 +15,15 @@ export const personasData = {
     secondaryColor: "#00d9f5",
     resumeFile: "./resumes/resume-a-ai-backend-agentic.pdf",
     resumeDownloadName: "Krutik_Tikam_Resume_A__AI_Backend___Agentic_Systems_.pdf",
+    visualMotif: "circuits",
+    layoutDefault: "grid",
+    featuredDescription: "Zero-overhead native desktop AI companion in Tauri v2 + Rust (<20MB RAM) paired with a 24-tool Anthropic Model Context Protocol (MCP) server connecting live 3D Blender sessions to LLMs.",
+    metrics: [
+      { value: "< 20MB", label: "Tauri Rust Core Footprint" },
+      { value: "24+", label: "Blender MCP Tool Endpoints" },
+      { value: "< 3.0s", label: "Local SLM Inference Latency" },
+      { value: "12,387", label: "Indexed Vector Embeddings" }
+    ],
     
     hero: {
       eyebrow: "SYSTEM ARCHITECTURE // AGENTIC INFRASTRUCTURE",
@@ -175,6 +184,15 @@ export const personasData = {
     secondaryColor: "#ff4040",
     resumeFile: "./resumes/resume-b-computer-vision-rl-signals.pdf",
     resumeDownloadName: "Krutik_Tikam_Resume_B_Applied_Computer_Vision__Reinforcement_Learning__and_Signal_Processing.pdf",
+    visualMotif: "reticle",
+    layoutDefault: "carousel",
+    featuredDescription: "Real-time sports broadcast analytics tracking 22 players + ball with active-learning dataset_v2 and continuous 6-DOF robotic arm PPO control running at 850 FPS headlessly in Blender.",
+    metrics: [
+      { value: "850 FPS", label: "Headless PPO Gymnasium Rate" },
+      { value: "22 + Ball", label: "Broadcast Kinematics Tracked" },
+      { value: "< 150ms", label: "EEGNet Motor Imagery Latency" },
+      { value: "0.001mm", label: "Rigid-Body Kinematic Tolerance" }
+    ],
     
     hero: {
       eyebrow: "SPATIAL REASONING // KINEMATICS // CONTINUOUS CONTROL",
@@ -335,6 +353,15 @@ export const personasData = {
     secondaryColor: "#8b5cf6",
     resumeFile: "./resumes/resume-c-end-to-end-ai-engineer.pdf",
     resumeDownloadName: "Krutik_Tikam_Resume_C_End_to_End_AI_Software_Engineer.pdf",
+    visualMotif: "layers",
+    layoutDefault: "grid",
+    featuredDescription: "Decoupled competitive ML heuristic engine with React 18 TypeScript PWA, async FastAPI microservices on Render/Vercel, and ultra-low VRAM diffusion image synthesis suite.",
+    metrics: [
+      { value: "100%", label: "Cloud Production Deployed" },
+      { value: "14+", label: "Shipped Systems & Apps" },
+      { value: "4GB", label: "Consumer VRAM Diffusion" },
+      { value: "60k+", label: "Candidate Schemas Scaled" }
+    ],
     
     hero: {
       eyebrow: "FULL-STACK ARCHITECTURE // DECOUPLED CLOUD & EDGE",

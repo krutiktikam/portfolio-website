@@ -1,17 +1,26 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import SectionLabel from './SectionLabel.jsx';
 
 export const DynamicProjectShowcase = ({ 
   allProjects, 
-  spotlightIds, 
-  personaId, 
-  personaTitle,
+  spotlightIds = [], 
+  personaId = 'agentic', 
+  personaTitle = '',
+  layoutDefault = 'grid',
   onSelectProject 
 }) => {
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'carousel'
+  const [viewMode, setViewMode] = useState(layoutDefault); // 'grid' | 'carousel'
   const [filterMode, setFilterMode] = useState('spotlight'); // 'spotlight' | 'all'
   const [selectedCategory, setSelectedCategory] = useState('All');
   
   const carouselRef = useRef(null);
+
+  // Sync viewMode when persona changes layoutDefault
+  useEffect(() => {
+    if (layoutDefault) {
+      setViewMode(layoutDefault);
+    }
+  }, [personaId, layoutDefault]);
 
   // Derive available categories
   const categories = useMemo(() => {
@@ -45,25 +54,30 @@ export const DynamicProjectShowcase = ({
 
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
-      const scrollAmount = direction === 'left' ? -380 : 380;
+      const scrollAmount = direction === 'left' ? -400 : 400;
       carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
 
   return (
     <div className="dynamic-project-showcase" id="projects-section">
+      <SectionLabel 
+        index="04" 
+        label="PRODUCTION SYSTEMS & RESEARCH" 
+        badge={`${filterMode === 'spotlight' ? 'SPOTLIGHT ARCHITECTURE' : 'COMPLETE REPOSITORY'} // ${displayedProjects.length} SYSTEMS`} 
+      />
+
       <div className="showcase-header-row">
         <div>
-          <span className="section-pill">ENGINEERED PRODUCTION SYSTEMS</span>
           <h3 className="showcase-main-title">
             Featured Systems: <span className="highlight-text">{personaTitle}</span>
           </h3>
           <p className="showcase-main-desc">
-            Production-grade backends, computer vision pipelines, robotics simulations, and deployed AI applications.
+            Hardened backends, real-time computer vision pipelines, headless robotics environments, and deployed full-stack AI applications.
           </p>
         </div>
 
-        {/* View mode toggle (Grid vs Carousel) */}
+        {/* View mode toggle (Grid vs Carousel) & Filter Scope */}
         <div className="showcase-view-controls">
           <div className="view-toggle-group">
             <button
@@ -130,7 +144,7 @@ export const DynamicProjectShowcase = ({
           >
             ‹
           </button>
-          <span className="carousel-hint">Scroll or swipe horizontally to explore all systems</span>
+          <span className="carousel-hint">Swipe or click arrows to explore {displayedProjects.length} systems in horizontal timeline format</span>
           <button 
             type="button" 
             className="carousel-arrow right"
@@ -147,8 +161,9 @@ export const DynamicProjectShowcase = ({
         ref={carouselRef}
         className={`projects-display-container ${viewMode === 'carousel' ? 'carousel-mode' : 'grid-mode'}`}
       >
-        {displayedProjects.map((project) => {
+        {displayedProjects.map((project, idx) => {
           const isSpotlight = spotlightIds.includes(project.id);
+          const indexNum = (idx + 1).toString().padStart(2, '0');
           return (
             <div 
               key={project.id} 
@@ -156,8 +171,9 @@ export const DynamicProjectShowcase = ({
               onClick={() => onSelectProject(project)}
             >
               <div className="card-top-header">
+                <span className="card-index-tag">[{indexNum}]</span>
                 <span className="project-badge">{project.badge}</span>
-                {isSpotlight && <span className="spotlight-tag">★ FLAGSHIP</span>}
+                {isSpotlight && <span className="spotlight-tag">★ SPOTLIGHT</span>}
               </div>
 
               <h4 className="project-title">{project.title}</h4>
@@ -169,8 +185,8 @@ export const DynamicProjectShowcase = ({
               </div>
 
               <div className="project-tech-chips">
-                {project.tech.map((t, idx) => (
-                  <span key={idx} className="tech-chip">{t}</span>
+                {project.tech.map((t, i) => (
+                  <span key={i} className="tech-chip">{t}</span>
                 ))}
               </div>
 
@@ -187,7 +203,7 @@ export const DynamicProjectShowcase = ({
                     rel="noopener noreferrer"
                     className="card-link-btn"
                   >
-                    <span>GitHub Repo</span>
+                    <span>GitHub</span>
                     <span className="external-arrow">↗</span>
                   </a>
                 )}
@@ -207,7 +223,7 @@ export const DynamicProjectShowcase = ({
                   className="card-details-btn"
                   onClick={() => onSelectProject(project)}
                 >
-                  Deep Dive →
+                  Specs →
                 </button>
               </div>
             </div>

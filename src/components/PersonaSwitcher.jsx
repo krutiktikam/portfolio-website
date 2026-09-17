@@ -4,52 +4,59 @@ export const PersonaSwitcher = ({ currentPersona, onSelectPersona, variant = "pi
   const personas = [
     {
       id: "agentic",
-      label: "⚡ AI Backend & Agents",
+      index: "01",
+      label: "AI Backend & Agents",
       code: "Resume A",
       tag: "Agentic & High-Throughput",
       color: "#00f5a0"
     },
     {
       id: "cv_rl",
-      label: "👁️ Vision, RL & Signals",
+      index: "02",
+      label: "Vision, RL & Signals",
       code: "Resume B",
       tag: "CV, 850 FPS RL, EEG AI",
       color: "#ff9f1c"
     },
     {
       id: "fullstack",
-      label: "🌐 Full-Stack AI Engineer",
+      index: "03",
+      label: "Full-Stack AI Engineer",
       code: "Resume C",
       tag: "End-to-End & Deployed",
       color: "#3b82f6"
     }
   ];
 
-  if (variant === "hero-banner") {
+  if (variant === "hero-banner" || variant === "context-bar") {
     return (
-      <div className="hero-persona-selector-container">
-        <div className="hero-persona-label">
-          <span className="live-dot pulse"></span>
-          <span>SELECT RECRUITER VIEW // TARGET ARCHITECTURE:</span>
+      <div className="editorial-context-switcher">
+        <div className="context-switcher-header">
+          <span className="live-dot pulse" />
+          <span className="context-switcher-title">ACTIVE TARGET ARCHITECTURE // SELECT RECRUITER VIEW:</span>
         </div>
-        <div className="hero-persona-buttons">
+        <div className="context-switcher-grid" role="radiogroup" aria-label="Target Architecture Selector">
           {personas.map((p) => {
             const isActive = currentPersona === p.id;
             return (
               <button
                 key={p.id}
                 type="button"
-                className={`hero-persona-btn ${isActive ? 'active' : ''}`}
+                className={`context-persona-card ${isActive ? 'active' : ''}`}
                 onClick={() => onSelectPersona(p.id)}
-                aria-pressed={isActive}
+                role="radio"
+                aria-checked={isActive}
               >
-                <div className="btn-glow-bar" style={{ background: p.color }}></div>
-                <div className="btn-content">
-                  <span className="persona-code-badge">{p.code}</span>
-                  <span className="persona-title-text">{p.label}</span>
-                  <span className="persona-tag-text">{p.tag}</span>
+                <div className="card-indicator-line" style={{ background: p.color }} />
+                <div className="context-card-body">
+                  <div className="context-meta-row">
+                    <span className="context-index">({p.index})</span>
+                    <span className="context-code">{p.code}</span>
+                    {isActive && <span className="context-status-pill">ACTIVE</span>}
+                  </div>
+                  <div className="context-title">{p.label}</div>
+                  <div className="context-tag">{p.tag}</div>
                 </div>
-                {isActive && <span className="active-check">✓ ACTIVE</span>}
               </button>
             );
           })}
@@ -73,7 +80,7 @@ export const PersonaSwitcher = ({ currentPersona, onSelectPersona, variant = "pi
             aria-checked={isActive}
             title={`Switch to ${p.label} (${p.code})`}
           >
-            <span className="pill-code">{p.code.split('_')[1] || p.code}</span>
+            <span className="pill-code">{p.index}</span>
             <span className="pill-label">{p.label}</span>
           </button>
         );

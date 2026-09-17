@@ -5,6 +5,10 @@ import { personasData } from './data/personasData.js';
 import PersonaSwitcher from './components/PersonaSwitcher.jsx';
 import ThemeToggle from './components/ThemeToggle.jsx';
 import HeroVisual from './components/HeroVisual.jsx';
+import SectionLabel from './components/SectionLabel.jsx';
+import FeaturedArchitecture from './components/FeaturedArchitecture.jsx';
+import WhyHowSection from './components/WhyHowSection.jsx';
+import MetricsBand from './components/MetricsBand.jsx';
 import DynamicProjectShowcase from './components/DynamicProjectShowcase.jsx';
 import InteractiveTimeline from './components/InteractiveTimeline.jsx';
 import BlogSection from './components/BlogSection.jsx';
@@ -255,9 +259,11 @@ function App() {
       </header>
 
       <main>
-        {/* 1. Persona-Specific Hero Section */}
+        {/* 1. Persona-Specific Hero Section (Asymmetric 60/40) */}
         <section className="hero-full-container" id="hero">
           <div className="hero-left-content">
+            <SectionLabel index="00" label="SYSTEM ARCHITECTURE & IDENTITY" badge={persona.code} />
+
             <div className="hero-eyebrow-row">
               <span className="live-dot pulse"></span>
               <span>{persona.hero.eyebrow}</span>
@@ -280,6 +286,10 @@ function App() {
                 <span>{persona.hero.primaryCta}</span>
                 <span>→</span>
               </button>
+
+              <a href="#featured" className="hero-btn-secondary">
+                Flagship Spec
+              </a>
 
               <a href="#projects-section" className="hero-btn-secondary">
                 {persona.hero.secondaryCta}
@@ -307,48 +317,42 @@ function App() {
           </div>
         </section>
 
-        {/* Persona Switcher Banner (Interactive Recruiter Mode Selector) */}
+        {/* Editorial Architecture Selector Strip */}
         <PersonaSwitcher 
           currentPersona={currentPersona}
           onSelectPersona={setCurrentPersona}
           variant="hero-banner"
         />
 
-        {/* 2. Persona-Specific About Me Section */}
-        <section className="about-persona-container" id="about">
-          <div className="about-card-wrapper">
-            <span className="section-pill">{persona.about.tag}</span>
-            <h2 className="about-headline">{persona.about.headline}</h2>
-            <p className="about-lead-p">{persona.about.leadParagraph}</p>
-            <p className="about-body-p">{persona.about.bodyParagraph}</p>
+        {/* 2. Flagship Project Architecture Spotlight */}
+        <FeaturedArchitecture
+          persona={persona}
+          allProjects={allProjects}
+          onSelectProject={(project) => setSelectedProject(project)}
+        />
 
-            <div className="about-focus-grid">
-              {persona.about.technicalFocus.map((focus, idx) => (
-                <div key={idx} className="focus-bullet-item">
-                  <span className="bullet-icon">⚡</span>
-                  <span>{focus}</span>
-                </div>
-              ))}
-            </div>
+        {/* 3. Editorial Why/How Philosophy Section */}
+        <WhyHowSection persona={persona} />
 
-            <div className="about-quote-box">
-              <p>"{persona.about.quote}"</p>
-            </div>
-          </div>
-        </section>
+        {/* 4. Verified Metrics Band with Hairline Dividers */}
+        <MetricsBand 
+          metrics={persona.metrics} 
+          personaCode={persona.code} 
+        />
 
-        {/* 3. Dynamic Project Showcase (Grid & Carousel Modes with Spotlights) */}
+        {/* 5. Dynamic Project Showcase (Grid & Carousel Modes with Spotlights) */}
         <DynamicProjectShowcase 
           allProjects={allProjects}
           spotlightIds={persona.spotlightProjectIds}
           personaId={currentPersona}
           personaTitle={persona.title}
+          layoutDefault={persona.layoutDefault}
           onSelectProject={(project) => setSelectedProject(project)}
         />
 
-        {/* 4. Skills Matrix with Persona-Specific Highlights */}
+        {/* 6. Skills Matrix with Persona-Specific Highlights */}
         <section className="skills-matrix-section" id="skills">
-          <span className="section-pill">TECHNICAL MASTERY & CORE CAPABILITIES</span>
+          <SectionLabel index="05" label="DOMAIN COMPETENCIES" badge="VERIFIED STACK" />
           <h3 className="showcase-main-title">
             Domain Competencies: <span className="highlight-text">{persona.title}</span>
           </h3>
@@ -373,34 +377,44 @@ function App() {
           </div>
         </section>
 
-        {/* 5. Interactive Timeline (Evolution of Skills & Milestones) */}
+        {/* 7. Interactive Timeline (Evolution of Skills & Milestones) */}
         <section id="timeline">
+          <SectionLabel index="06" label="CHRONOLOGY & MILESTONES" badge="CAREER EVOLUTION" />
           <InteractiveTimeline 
             timelineData={persona.timeline}
             personaTitle={persona.title}
           />
         </section>
 
-        {/* 6. Persona-Specific Technical Articles & Engineering Deep-Dives */}
-        <BlogSection 
-          articles={persona.articles}
-          personaId={currentPersona}
-          personaTitle={persona.title}
-        />
+        {/* 8. Persona-Specific Technical Articles & Engineering Deep-Dives */}
+        <div id="articles-section">
+          <SectionLabel index="07" label="ENGINEERING PUBLICATIONS" badge="DEEP-DIVES" />
+          <BlogSection 
+            articles={persona.articles}
+            personaId={currentPersona}
+            personaTitle={persona.title}
+          />
+        </div>
 
-        {/* 7. Persona-Specific Testimonials & Peer Reviews */}
-        <TestimonialsSection 
-          testimonials={persona.testimonials}
-          personaId={currentPersona}
-          personaTitle={persona.title}
-        />
+        {/* 9. Persona-Specific Testimonials & Peer Reviews */}
+        <div id="testimonials-section">
+          <SectionLabel index="08" label="PEER EVALUATIONS" badge="ENDORSEMENTS" />
+          <TestimonialsSection 
+            testimonials={persona.testimonials}
+            personaId={currentPersona}
+            personaTitle={persona.title}
+          />
+        </div>
 
-        {/* 8. Contextual Persona Contact Form */}
-        <PersonaContactForm 
-          contactConfig={persona.contact}
-          personaId={currentPersona}
-          personaTitle={persona.title}
-        />
+        {/* 10. Contextual Persona Contact Form */}
+        <div id="contact-section">
+          <SectionLabel index="09" label="TRANSMISSION INTERFACE" badge="DIRECT CONNECT" />
+          <PersonaContactForm 
+            contactConfig={persona.contact}
+            personaId={currentPersona}
+            personaTitle={persona.title}
+          />
+        </div>
       </main>
 
       {/* Footer */}
