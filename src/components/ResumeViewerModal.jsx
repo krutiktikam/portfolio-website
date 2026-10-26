@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-export const ResumeViewerModal = ({ isOpen, onClose, initialPersona = "agentic" }) => {
-  const [activeTab, setActiveTab] = useState(initialPersona);
+export const ResumeViewerModal = ({ isOpen, onClose, initialView = "ai" }) => {
+  const [activeTab, setActiveTab] = useState(initialView);
 
   useEffect(() => {
     if (isOpen) {
-      setActiveTab(initialPersona);
+      setActiveTab(initialView);
     }
-  }, [isOpen, initialPersona]);
+  }, [isOpen, initialView]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -22,35 +22,27 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialPersona = "agentic" 
   if (!isOpen) return null;
 
   const resumeConfigs = {
-    agentic: {
-      code: "Resume A",
-      label: "⚡ AI Backend & Agentic Systems",
-      path: "./resumes/resume-a-ai-backend-agentic.pdf",
-      fileName: "Krutik_Tikam_Resume_A__AI_Backend___Agentic_Systems_.pdf",
-      summary: "Specialized for AI Systems Engineer, Distributed Backend, Agentic Workflows (MCP), and High-Throughput RAG roles."
+    ai: {
+      code: "AI / Backend",
+      label: "AI & Backend Resume",
+      path: "./resumes/resume-ai-backend.pdf",
+      fileName: "Krutik_Tikam_Resume_AI_Backend.pdf",
+      description: "Focused on Local LLMs, RAG, Computer Vision, and Backend Engineering."
     },
-    cv_rl: {
-      code: "Resume B",
-      label: "👁️ Vision, RL & Signal Processing",
-      path: "./resumes/resume-b-computer-vision-rl-signals.pdf",
-      fileName: "Krutik_Tikam_Resume_B_Applied_Computer_Vision__Reinforcement_Learning__and_Signal_Processing.pdf",
-      summary: "Specialized for Computer Vision, Robotics Simulation (Gymnasium/PPO), Active Learning, and Biomedical Signal AI (EEGNet) roles."
-    },
-    fullstack: {
-      code: "Resume C",
-      label: "🌐 End-to-End AI Software Engineer",
-      path: "./resumes/resume-c-end-to-end-ai-engineer.pdf",
-      fileName: "Krutik_Tikam_Resume_C_End_to_End_AI_Software_Engineer.pdf",
-      summary: "Specialized for Full-Stack AI Software Engineering, Production Cloud Deployments, and End-to-End Generative AI Applications."
+    data: {
+      code: "Data / Analytics",
+      label: "Data & Analytics Resume",
+      path: "./resumes/resume-data-analytics.pdf",
+      fileName: "Krutik_Tikam_Resume_Data_Analytics.pdf",
+      description: "Focused on Data Analytics, SQL, Python, ETL, and Sports Telemetry."
     }
   };
 
-  const currentConfig = resumeConfigs[activeTab] || resumeConfigs.agentic;
+  const currentConfig = resumeConfigs[activeTab] || resumeConfigs.ai;
 
   return (
     <div className="modal-backdrop resume-modal-backdrop" onClick={onClose}>
       <div className="resume-modal-container" onClick={(e) => e.stopPropagation()}>
-        {/* Top bar with 3 resume tabs */}
         <div className="resume-modal-header">
           <div className="resume-tabs-row" role="tablist">
             {Object.entries(resumeConfigs).map(([key, config]) => {
@@ -64,7 +56,6 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialPersona = "agentic" 
                   role="tab"
                   aria-selected={isSelected}
                 >
-                  <span className="tab-code-tag">{config.code}</span>
                   <span className="tab-label-text">{config.label}</span>
                 </button>
               );
@@ -78,7 +69,7 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialPersona = "agentic" 
               className="btn-download-resume"
               title={`Download ${currentConfig.fileName}`}
             >
-              📥 Download PDF
+              Download PDF
             </a>
             <a
               href={currentConfig.path}
@@ -87,7 +78,7 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialPersona = "agentic" 
               className="btn-open-external"
               title="Open in new window"
             >
-              ↗ Open Tab
+              Open in Tab ↗
             </a>
             <button 
               type="button" 
@@ -100,13 +91,11 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialPersona = "agentic" 
           </div>
         </div>
 
-        {/* Informational sub-header */}
         <div className="resume-modal-subbar">
-          <span className="active-badge">ACTIVE: {currentConfig.code.toUpperCase()}</span>
-          <span className="active-desc">{currentConfig.summary}</span>
+          <span className="active-badge">{currentConfig.code}</span>
+          <span className="active-desc">{currentConfig.description}</span>
         </div>
 
-        {/* Embedded PDF Viewer */}
         <div className="resume-iframe-wrapper">
           <iframe
             src={`${currentConfig.path}#toolbar=1&navpanes=0`}
@@ -115,15 +104,14 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialPersona = "agentic" 
           />
         </div>
 
-        {/* Mobile download fallback footer */}
         <div className="resume-modal-footer">
-          <span>Viewing on mobile or browser blocking PDF embedding?</span>
+          <span>Need a direct copy?</span>
           <a 
             href={currentConfig.path} 
             download={currentConfig.fileName}
             className="mobile-download-link"
           >
-            Direct Download {currentConfig.code} (PDF)
+            Download {currentConfig.label} (PDF)
           </a>
         </div>
       </div>

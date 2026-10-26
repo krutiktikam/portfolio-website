@@ -1,26 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { allProjects } from './data/allProjects.js';
-import { personasData } from './data/personasData.js';
+import { viewsData, contactInfo } from './data/viewsData.js';
 
-import PersonaSwitcher from './components/PersonaSwitcher.jsx';
 import ThemeToggle from './components/ThemeToggle.jsx';
-import HeroVisual from './components/HeroVisual.jsx';
 import SectionLabel from './components/SectionLabel.jsx';
-import FeaturedArchitecture from './components/FeaturedArchitecture.jsx';
-import WhyHowSection from './components/WhyHowSection.jsx';
-import MetricsBand from './components/MetricsBand.jsx';
-import DynamicProjectShowcase from './components/DynamicProjectShowcase.jsx';
-import InteractiveTimeline from './components/InteractiveTimeline.jsx';
-import BlogSection from './components/BlogSection.jsx';
-import TestimonialsSection from './components/TestimonialsSection.jsx';
 import ResumeViewerModal from './components/ResumeViewerModal.jsx';
-import PersonaContactForm from './components/PersonaContactForm.jsx';
 
 function App() {
-  // 1. Persona State ('agentic' | 'cv_rl' | 'fullstack')
-  const [currentPersona, setCurrentPersona] = useState(() => {
-    return localStorage.getItem('preferred_persona') || 'agentic';
-  });
+  // 1. Dual-view routing ('ai' | 'data') based on URL hash
+  const getInitialView = () => {
+    const hash = window.location.hash.toLowerCase();
+    if (hash === '#data') return 'data';
+    return 'ai'; // Default to 'ai' for #ai or any unknown hash
+  };
+
+  const [currentView, setCurrentView] = useState(getInitialView);
 
   // 2. Theme State (Dark Mode default)
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -28,83 +22,53 @@ function App() {
   });
 
   // Active section spy
-  const [activeNav, setActiveNav] = useState('home');
+  const [activeNav, setActiveNav] = useState('projects');
 
-  // Modals & Popups
+  // Modals
   const [showResumeModal, setShowResumeModal] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [showCliModal, setShowCliModal] = useState(false);
 
-  // Terminal CLI State
-  const [cliInput, setCliInput] = useState('');
-  const [cliHistory, setCliHistory] = useState([
-    { cmd: 'welcome', response: 'Krutik Developer CLI v3.0 [Dynamic Persona Active]. Type "help" or "switch <a|b|c>" to change view. Shortcut: Ctrl+K / Cmd+K' }
-  ]);
-  const cliBodyRef = useRef(null);
-
-  // Custom Cursor State
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
-
-  // Get active persona data object
-  const persona = personasData[currentPersona] || personasData.agentic;
-
-  // Sync Body Attributes and LocalStorage on persona/theme change
+  // Sync with window.location.hash on load and change
   useEffect(() => {
-    document.body.setAttribute('data-persona', currentPersona);
-    localStorage.setItem('preferred_persona', currentPersona);
-    document.title = `Krutik Tikam | ${persona.shortRole} (${persona.code})`;
-  }, [currentPersona, persona]);
+    const handleHashChange = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash === '#data') {
+        setCurrentView('data');
+      } else if (hash === '#ai') {
+        setCurrentView('ai');
+      } else if (hash) {
+        // If hash matches a section anchor (e.g. #projects, #experience, #skills, #contact)
+        const targetId = hash.replace('#', '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // Unknown hash falls back to AI view without error
+          setCurrentView('ai');
+        }
+      } else {
+        setCurrentView('ai');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Update document title and body data-attributes
+  useEffect(() => {
+    document.body.setAttribute('data-view', currentView);
+    document.title = `Krutik Tikam | ${viewsData[currentView].label}`;
+  }, [currentView]);
 
   useEffect(() => {
     document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
     localStorage.setItem('preferred_theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
-  // Global Keyboard shortcuts (Ctrl+K for CLI)
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setShowCliModal(prev => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Custom Cursor Mouse Tracker
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
-    };
-
-    const handleMouseOver = (e) => {
-      const target = e.target;
-      const isInteractive = target.closest('a') || 
-                            target.closest('button') || 
-                            target.closest('.project-card') || 
-                            target.closest('.article-card') || 
-                            target.closest('.hero-persona-btn') || 
-                            target.closest('.persona-pill-btn') || 
-                            target.closest('input') || 
-                            target.closest('select') || 
-                            target.closest('textarea');
-      setIsHoveringInteractive(!!isInteractive);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, []);
-
   // Scroll Spy for Header Nav
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['hero', 'about', 'projects-section', 'skills', 'timeline', 'articles-section', 'contact-section'];
+      const sections = ['projects', 'skills', 'experience', 'contact'];
       const scrollPos = window.scrollY + 200;
 
       for (const id of sections) {
@@ -124,454 +88,357 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // CLI Command Processor
-  const handleCliSubmit = (e) => {
-    e.preventDefault();
-    const trimmed = cliInput.trim().toLowerCase();
-    if (!trimmed) return;
-
-    let resp = '';
-
-    if (trimmed.startsWith('switch ') || trimmed.startsWith('persona ')) {
-      const arg = trimmed.split(' ')[1];
-      if (arg === 'a' || arg === 'agentic' || arg === 'backend') {
-        setCurrentPersona('agentic');
-        resp = 'Switched persona to: ⚡ Resume A (AI Backend & Agentic Systems)';
-      } else if (arg === 'b' || arg === 'cv' || arg === 'rl' || arg === 'signals') {
-        setCurrentPersona('cv_rl');
-        resp = 'Switched persona to: 👁️ Resume B (Applied Computer Vision, RL & Signals)';
-      } else if (arg === 'c' || arg === 'fullstack' || arg === 'software') {
-        setCurrentPersona('fullstack');
-        resp = 'Switched persona to: 🌐 Resume C (End-to-End AI Software Engineer)';
-      } else {
-        resp = 'Invalid persona. Options: "switch a" (Backend), "switch b" (Vision/RL), "switch c" (Fullstack)';
-      }
-    } else {
-      switch (trimmed) {
-        case 'help':
-          resp = 'Available Commands:\n• switch <a|b|c> : Switch between the 3 resumes & aesthetics\n• resume         : Open active resume viewer\n• bio            : Current persona technical bio\n• skills         : Active skills matrix highlights\n• projects       : Spotlight systems for current persona\n• articles       : Engineering deep-dives\n• clear          : Clear console';
-          break;
-        case 'resume':
-          resp = `Opening Resume Viewer for ${persona.title} (${persona.code})...`;
-          setShowResumeModal(true);
-          break;
-        case 'bio':
-          resp = `[${persona.code}: ${persona.title}]\n${persona.about.leadParagraph}`;
-          break;
-        case 'skills':
-          resp = persona.skillsCategories.map(c => `[${c.title}]\n${c.items.join(', ')}`).join('\n\n');
-          break;
-        case 'projects':
-          const spot = allProjects.filter(p => persona.spotlightProjectIds.includes(p.id));
-          resp = spot.map(p => `• ${p.title} (${p.badge})\n  ${p.metricText}`).join('\n\n');
-          break;
-        case 'articles':
-          resp = persona.articles.map(a => `• ${a.title} (${a.date})\n  ${a.summary}`).join('\n\n');
-          break;
-        case 'clear':
-          setCliHistory([]);
-          setCliInput('');
-          return;
-        default:
-          resp = `Command not recognized: "${trimmed}". Type "help" or "switch a/b/c".`;
-      }
-    }
-
-    setCliHistory(prev => [...prev, { cmd: trimmed, response: resp }]);
-    setCliInput('');
-
-    setTimeout(() => {
-      if (cliBodyRef.current) {
-        cliBodyRef.current.scrollTop = cliBodyRef.current.scrollHeight;
-      }
-    }, 50);
+  const toggleView = () => {
+    const nextView = currentView === 'ai' ? 'data' : 'ai';
+    setCurrentView(nextView);
+    window.location.hash = `#${nextView}`;
   };
 
-  return (
-    <>
-      {/* Custom Circular Cursor */}
-      <div 
-        className="cursor-dot" 
-        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px`, pointerEvents: 'none' }}
-      />
-      <div 
-        className={`cursor-outline ${isHoveringInteractive ? 'hovered' : ''}`}
-        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px`, pointerEvents: 'none' }}
-      />
+  const view = viewsData[currentView];
 
+  // Filter projects for current view
+  const currentProjects = allProjects.filter(p => p.views.includes(currentView));
+  const featuredProjects = currentProjects.filter(p => p.featuredIn.includes(currentView));
+  const otherProjects = currentProjects.filter(p => !p.featuredIn.includes(currentView));
+
+  return (
+    <div className="portfolio-app">
       {/* Top Header Navigation */}
       <header className="site-header">
         <div className="header-container">
-          <a href="#hero" className="header-brand">
+          <a href="#ai" className="header-brand" onClick={() => { setCurrentView('ai'); window.location.hash = '#ai'; }}>
             <img 
               src="https://avatars.githubusercontent.com/u/132470725?v=4" 
-              alt="Krutik Tikam" 
+              alt="Krutik Tikam profile" 
               className="brand-avatar" 
             />
             <div className="brand-info">
               <span className="logo">Krutik Tikam</span>
-              <span className="brand-role-tag">{persona.shortRole}</span>
+              <span className="brand-role-tag">{view.label}</span>
             </div>
           </a>
 
           {/* Header Navigation Links */}
           <nav className="header-nav-links" aria-label="Main Navigation">
-            <a href="#about" className={activeNav === 'about' ? 'active' : ''}>About</a>
-            <a href="#projects-section" className={activeNav === 'projects-section' ? 'active' : ''}>Projects</a>
+            <a href="#projects" className={activeNav === 'projects' ? 'active' : ''}>Projects</a>
             <a href="#skills" className={activeNav === 'skills' ? 'active' : ''}>Skills</a>
-            <a href="#timeline" className={activeNav === 'timeline' ? 'active' : ''}>Timeline</a>
-            <a href="#articles-section" className={activeNav === 'articles-section' ? 'active' : ''}>Articles</a>
-            <a href="#contact-section" className={activeNav === 'contact-section' ? 'active' : ''}>Contact</a>
+            <a href="#experience" className={activeNav === 'experience' ? 'active' : ''}>Experience</a>
+            <a href="#contact" className={activeNav === 'contact' ? 'active' : ''}>Contact</a>
           </nav>
 
-          {/* Persona Switcher Component (Pill Mode) */}
-          <PersonaSwitcher 
-            currentPersona={currentPersona}
-            onSelectPersona={setCurrentPersona}
-            variant="pill"
-          />
-
-          {/* Actions: Theme Toggle, Terminal, Resume CTA */}
+          {/* View Toggle & Actions */}
           <div className="header-actions-group">
-            <button 
-              type="button" 
-              className="header-cli-btn"
-              onClick={() => setShowCliModal(true)}
-              title="Open Terminal (Ctrl+K)"
-            >
-              ⌨️ <span className="hide-mobile">CLI</span>
-            </button>
+            {/* 2-View Switcher Toggle */}
+            <div className="view-switch-box" role="group" aria-label="Portfolio Track Switcher">
+              <button
+                type="button"
+                className={`view-switch-btn ${currentView === 'ai' ? 'active' : ''}`}
+                onClick={() => { setCurrentView('ai'); window.location.hash = '#ai'; }}
+                aria-pressed={currentView === 'ai'}
+              >
+                AI / Backend
+              </button>
+              <button
+                type="button"
+                className={`view-switch-btn ${currentView === 'data' ? 'active' : ''}`}
+                onClick={() => { setCurrentView('data'); window.location.hash = '#data'; }}
+                aria-pressed={currentView === 'data'}
+              >
+                Data Analyst
+              </button>
+            </div>
 
             <ThemeToggle 
               isDark={isDarkMode} 
               onToggleTheme={() => setIsDarkMode(prev => !prev)} 
             />
 
-            <button
-              type="button"
+            <a
+              href={view.resumeFile}
+              download={view.resumeDownloadName}
               className="header-resume-cta"
-              onClick={() => setShowResumeModal(true)}
+              title={`Download ${view.resumeLabel}`}
             >
-              📄 {persona.code.split('_')[1] || 'Resume'} PDF
-            </button>
+              Download resume
+            </a>
           </div>
         </div>
       </header>
 
       <main>
-        {/* 1. Persona-Specific Hero Section (Asymmetric 60/40) */}
+        {/* Hero Section */}
         <section className="hero-full-container" id="hero">
-          <div className="hero-left-content">
-            <SectionLabel index="00" label="SYSTEM ARCHITECTURE & IDENTITY" badge={persona.code} />
-
-            <div className="hero-eyebrow-row">
+          <div className="hero-content">
+            <div className="hero-view-badge">
               <span className="live-dot pulse"></span>
-              <span>{persona.hero.eyebrow}</span>
+              <span>TRACK: {view.label.toUpperCase()}</span>
             </div>
 
             <h1 className="hero-headline">
-              {persona.hero.headline}
+              {view.headline}
             </h1>
 
             <p className="hero-subheadline">
-              {persona.hero.subheadline}
+              {view.availability}
             </p>
 
             <div className="hero-cta-row">
-              <button 
-                type="button" 
+              <a
+                href={view.resumeFile}
+                download={view.resumeDownloadName}
                 className="hero-btn-primary"
+                title={`Download ${view.resumeLabel}`}
+              >
+                Download resume
+              </a>
+              <button
+                type="button"
+                className="hero-btn-secondary"
                 onClick={() => setShowResumeModal(true)}
               >
-                <span>{persona.hero.primaryCta}</span>
-                <span>→</span>
+                View resume PDF
               </button>
-
-              <a href="#featured" className="hero-btn-secondary">
-                Flagship Spec
+              <a 
+                href={contactInfo.github} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hero-btn-secondary"
+              >
+                GitHub ↗
               </a>
-
-              <a href="#projects-section" className="hero-btn-secondary">
-                {persona.hero.secondaryCta}
+              <a 
+                href={contactInfo.linkedin} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hero-btn-secondary"
+              >
+                LinkedIn ↗
               </a>
-
-              <a href="#contact-section" className="hero-btn-secondary">
-                Quick Connect
+              <a 
+                href={`mailto:${contactInfo.email}`} 
+                className="hero-btn-secondary"
+              >
+                Email
               </a>
             </div>
 
-            <div className="hero-stats-row">
-              {persona.hero.stats.map((stat, idx) => (
-                <div key={idx} className="stat-item">
-                  <span className="stat-val">{stat.value}</span>
-                  <span className="stat-label">{stat.label}</span>
-                  <span className="stat-desc">{stat.desc}</span>
-                </div>
-              ))}
+            <div className="hero-toggle-hint">
+              <span>Looking for {currentView === 'ai' ? 'data analytics' : 'AI & backend systems'}? </span>
+              <button type="button" className="inline-toggle-link" onClick={toggleView}>
+                {view.toggleText} →
+              </button>
             </div>
-          </div>
-
-          {/* Domain-specific dynamic visual canvas */}
-          <div className="hero-right-visual">
-            <HeroVisual personaId={currentPersona} />
           </div>
         </section>
 
-        {/* Editorial Architecture Selector Strip */}
-        <PersonaSwitcher 
-          currentPersona={currentPersona}
-          onSelectPersona={setCurrentPersona}
-          variant="hero-banner"
-        />
+        {/* Featured Projects Section */}
+        <section className="projects-section-container" id="projects">
+          <SectionLabel index="01" label="PROJECTS" badge={`${view.label.toUpperCase()} SHOWCASE`} />
+          
+          <h2 className="section-main-heading">
+            Featured Projects
+          </h2>
 
-        {/* 2. Flagship Project Architecture Spotlight */}
-        <FeaturedArchitecture
-          persona={persona}
-          allProjects={allProjects}
-          onSelectProject={(project) => setSelectedProject(project)}
-        />
-
-        {/* 3. Editorial Why/How Philosophy Section */}
-        <WhyHowSection persona={persona} />
-
-        {/* 4. Verified Metrics Band with Hairline Dividers */}
-        <MetricsBand 
-          metrics={persona.metrics} 
-          personaCode={persona.code} 
-        />
-
-        {/* 5. Dynamic Project Showcase (Grid & Carousel Modes with Spotlights) */}
-        <DynamicProjectShowcase 
-          allProjects={allProjects}
-          spotlightIds={persona.spotlightProjectIds}
-          personaId={currentPersona}
-          personaTitle={persona.title}
-          layoutDefault={persona.layoutDefault}
-          onSelectProject={(project) => setSelectedProject(project)}
-        />
-
-        {/* 6. Skills Matrix with Persona-Specific Highlights */}
-        <section className="skills-matrix-section" id="skills">
-          <SectionLabel index="05" label="DOMAIN COMPETENCIES" badge="VERIFIED STACK" />
-          <h3 className="showcase-main-title">
-            Domain Competencies: <span className="highlight-text">{persona.title}</span>
-          </h3>
-          <p className="showcase-main-desc">
-            Hardened frameworks, low-latency protocols, and architectures applied across production systems.
-          </p>
-
-          <div className="skills-matrix-grid">
-            {persona.skillsCategories.map((cat, idx) => (
-              <div key={idx} className="skill-category-card">
-                <div className="skill-card-header">
-                  <span className="skill-card-icon">{cat.icon}</span>
-                  <h4 className="skill-card-title">{cat.title}</h4>
+          <div className="projects-grid">
+            {featuredProjects.map(project => (
+              <article key={project.id} className="project-card featured-card">
+                <div className="card-top-header">
+                  <span className="project-badge">{project.metricBadge}</span>
                 </div>
-                <div className="skill-items-list">
-                  {cat.items.map((item, i) => (
-                    <span key={i} className="skill-pill-tag">{item}</span>
-                  ))}
+
+                <h3 className="project-title">{project.title}</h3>
+                <p className="project-tagline">{project.tagline}</p>
+                <p className="project-desc">{project.description}</p>
+
+                {project.limitations && (
+                  <div className="project-limitations-box">
+                    <span className="limitations-label">Limitations and next steps:</span>
+                    <p className="limitations-text">{project.limitations}</p>
+                  </div>
+                )}
+
+                <div className="project-card-footer">
+                  {project.gitUrl && (
+                    <a
+                      href={project.gitUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="card-link-btn"
+                    >
+                      GitHub ↗
+                    </a>
+                  )}
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="card-link-btn live"
+                    >
+                      Live Demo ↗
+                    </a>
+                  )}
                 </div>
+              </article>
+            ))}
+          </div>
+
+          {otherProjects.length > 0 && (
+            <div className="other-projects-block">
+              <h3 className="sub-heading">Other Projects</h3>
+              <div className="other-projects-grid">
+                {otherProjects.map(project => (
+                  <article key={project.id} className="project-card small-card">
+                    <div className="card-top-header">
+                      <span className="project-badge">{project.metricBadge}</span>
+                    </div>
+
+                    <h4 className="project-title">{project.title}</h4>
+                    <p className="project-tagline">{project.tagline}</p>
+                    <p className="project-desc">{project.description}</p>
+
+                    <div className="project-card-footer">
+                      {project.gitUrl && (
+                        <a
+                          href={project.gitUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="card-link-btn"
+                        >
+                          GitHub ↗
+                        </a>
+                      )}
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="card-link-btn live"
+                        >
+                          Live Demo ↗
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Skills Section */}
+        <section className="skills-section-container" id="skills">
+          <SectionLabel index="02" label="TECHNICAL SKILLS" badge={view.label.toUpperCase()} />
+          <h2 className="section-main-heading">Skills & Certifications</h2>
+
+          <div className="skills-groups-grid">
+            {view.skillsGroups.map((group, idx) => (
+              <div key={idx} className="skill-group-card">
+                <h3 className="skill-group-title">{group.category}</h3>
+                <p className="skill-group-text">{group.skills}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="certifications-card">
+            <h3 className="certifications-title">Certifications</h3>
+            <ul className="certifications-list">
+              {view.certifications.map((cert, idx) => (
+                <li key={idx}>{cert}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* Experience & Education Section */}
+        <section className="experience-section-container" id="experience">
+          <SectionLabel index="03" label="TIMELINE" badge="EXPERIENCE & EDUCATION" />
+          <h2 className="section-main-heading">Experience & Education</h2>
+
+          <div className="timeline-items-list">
+            {view.experience.map((exp, idx) => (
+              <div key={idx} className="timeline-item-card">
+                <div className="timeline-meta">
+                  <span className="timeline-period">{exp.period}</span>
+                  <span className="timeline-org">{exp.organization}</span>
+                </div>
+                <h3 className="timeline-role">{exp.role}</h3>
+                <p className="timeline-details">{exp.details}</p>
+              </div>
+            ))}
+
+            {view.education.map((edu, idx) => (
+              <div key={`edu-${idx}`} className="timeline-item-card education-card">
+                <div className="timeline-meta">
+                  <span className="timeline-period">{edu.period}</span>
+                  <span className="timeline-org">University Education</span>
+                </div>
+                <h3 className="timeline-role">{edu.degree}</h3>
               </div>
             ))}
           </div>
         </section>
 
-        {/* 7. Interactive Timeline (Evolution of Skills & Milestones) */}
-        <section id="timeline">
-          <SectionLabel index="06" label="CHRONOLOGY & MILESTONES" badge="CAREER EVOLUTION" />
-          <InteractiveTimeline 
-            timelineData={persona.timeline}
-            personaTitle={persona.title}
-          />
+        {/* Contact Section */}
+        <section className="contact-section-container" id="contact">
+          <SectionLabel index="04" label="CONNECT" badge="DIRECT CONTACT" />
+          <h2 className="section-main-heading">Contact</h2>
+          
+          <div className="contact-card">
+            <p className="contact-lead">
+              Open to junior AI/backend and data analyst roles, remote or Mumbai. Feel free to reach out directly:
+            </p>
+
+            <div className="contact-links-grid">
+              <a href={`mailto:${contactInfo.email}`} className="contact-link-pill">
+                <span className="contact-icon">✉️</span>
+                <span>{contactInfo.email}</span>
+              </a>
+              <a href={contactInfo.github} target="_blank" rel="noopener noreferrer" className="contact-link-pill">
+                <span className="contact-icon">🐙</span>
+                <span>github.com/krutiktikam</span>
+              </a>
+              <a href={contactInfo.linkedin} target="_blank" rel="noopener noreferrer" className="contact-link-pill">
+                <span className="contact-icon">💼</span>
+                <span>linkedin.com/in/krutik-tikam-95339b286</span>
+              </a>
+            </div>
+
+            <div className="contact-download-box">
+              <a 
+                href={view.resumeFile} 
+                download={view.resumeDownloadName}
+                className="hero-btn-primary"
+              >
+                Download {view.resumeLabel} (PDF)
+              </a>
+            </div>
+          </div>
         </section>
-
-        {/* 8. Persona-Specific Technical Articles & Engineering Deep-Dives */}
-        <div id="articles-section">
-          <SectionLabel index="07" label="ENGINEERING PUBLICATIONS" badge="DEEP-DIVES" />
-          <BlogSection 
-            articles={persona.articles}
-            personaId={currentPersona}
-            personaTitle={persona.title}
-          />
-        </div>
-
-        {/* 9. Persona-Specific Testimonials & Peer Reviews */}
-        <div id="testimonials-section">
-          <SectionLabel index="08" label="PEER EVALUATIONS" badge="ENDORSEMENTS" />
-          <TestimonialsSection 
-            testimonials={persona.testimonials}
-            personaId={currentPersona}
-            personaTitle={persona.title}
-          />
-        </div>
-
-        {/* 10. Contextual Persona Contact Form */}
-        <div id="contact-section">
-          <SectionLabel index="09" label="TRANSMISSION INTERFACE" badge="DIRECT CONNECT" />
-          <PersonaContactForm 
-            contactConfig={persona.contact}
-            personaId={currentPersona}
-            personaTitle={persona.title}
-          />
-        </div>
       </main>
 
       {/* Footer */}
       <footer className="site-footer">
         <div>
-          <span>© 2026 Krutik Tikam. Engineered with React 19 & Vite.</span>
-          <div className="footer-persona-info">
-            Active Recruiter Persona: <strong>{persona.title} ({persona.code})</strong>
+          <span>© 2026 Krutik Tikam. Built with React 19 & Vite.</span>
+          <div className="footer-view-status">
+            Current track: <strong>{view.label}</strong>
           </div>
         </div>
         <div className="footer-social-links">
-          <a href="https://github.com/krutiktikam" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href="https://linkedin.com/in/krutik-tikam-95339b286" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="mailto:krutiktikam7@gmail.com">krutiktikam7@gmail.com</a>
+          <a href={contactInfo.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href={contactInfo.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href={`mailto:${contactInfo.email}`}>{contactInfo.email}</a>
         </div>
       </footer>
 
-      {/* Interactive 3-Tab Resume Viewer Modal */}
+      {/* 2-Tab Resume Viewer Modal */}
       <ResumeViewerModal 
         isOpen={showResumeModal}
         onClose={() => setShowResumeModal(false)}
-        initialPersona={currentPersona}
+        initialView={currentView}
       />
-
-      {/* Project Detail Deep-Dive Modal */}
-      {selectedProject && (
-        <div className="modal-backdrop" onClick={() => setSelectedProject(null)}>
-          <div className="project-modal-window" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div>
-                <div className="project-modal-meta-row">
-                  <span className="project-badge">{selectedProject.badge}</span>
-                </div>
-                <h3 className="project-modal-title">{selectedProject.title}</h3>
-                <p className="project-modal-tagline">{selectedProject.tagline}</p>
-              </div>
-              <button 
-                type="button" 
-                className="modal-close-btn"
-                onClick={() => setSelectedProject(null)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="project-modal-grid-2">
-              <div className="modal-info-box">
-                <h5>THE CORE PROBLEM</h5>
-                <p>{selectedProject.problem}</p>
-              </div>
-              <div className="modal-info-box">
-                <h5>SYSTEM ARCHITECTURE</h5>
-                <p>{selectedProject.architecture}</p>
-              </div>
-            </div>
-
-            <div className="modal-info-box" style={{ marginBottom: '20px' }}>
-              <h5>APPLIED ML & ENGINEERING APPROACH</h5>
-              <p>{selectedProject.mlApproach}</p>
-            </div>
-
-            <div className="modal-info-box">
-              <h5>VERIFIED PRODUCTION METRIC</h5>
-              <p style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>{selectedProject.metricText}</p>
-            </div>
-
-            <div className="modal-info-box" style={{ marginTop: '16px' }}>
-              <h5>TECHNOLOGY STACK</h5>
-              <div className="project-modal-tech-list">
-                {selectedProject.tech.map((t, idx) => (
-                  <span key={idx} className="tech-chip">{t}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="project-modal-actions">
-              {selectedProject.gitUrl && (
-                <a
-                  href={selectedProject.gitUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-btn-primary"
-                >
-                  View Source Code on GitHub ↗
-                </a>
-              )}
-              {selectedProject.liveUrl && (
-                <a
-                  href={selectedProject.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-btn-secondary"
-                >
-                  Visit Live Web Application ↗
-                </a>
-              )}
-              <button
-                type="button"
-                className="hero-btn-secondary"
-                onClick={() => setSelectedProject(null)}
-              >
-                Close View
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Terminal CLI Modal */}
-      {showCliModal && (
-        <div className="modal-backdrop" onClick={() => setShowCliModal(false)}>
-          <div className="cli-modal-window" onClick={(e) => e.stopPropagation()}>
-            <div className="cli-header">
-              <div className="cli-dots">
-                <span className="cli-dot red"></span>
-                <span className="cli-dot yellow"></span>
-                <span className="cli-dot green"></span>
-              </div>
-              <span className="cli-title">krutik@developer-terminal ~ [{persona.code}: {persona.shortRole}]</span>
-              <button 
-                type="button" 
-                className="modal-close-btn"
-                onClick={() => setShowCliModal(false)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="cli-body" ref={cliBodyRef}>
-              {cliHistory.map((item, idx) => (
-                <div key={idx} className="cli-history-entry">
-                  {item.cmd !== 'welcome' && (
-                    <div className="cli-cmd-line">
-                      <span className="cli-prompt">➜ ~</span>
-                      <span className="cli-cmd-text">{item.cmd}</span>
-                    </div>
-                  )}
-                  <pre className="cli-response-text">{item.response}</pre>
-                </div>
-              ))}
-            </div>
-
-            <form onSubmit={handleCliSubmit} className="cli-input-form">
-              <span className="cli-prompt">➜ ~</span>
-              <input
-                type="text"
-                autoFocus
-                placeholder="Type 'help', 'switch a', 'switch b', 'switch c', or 'resume'..."
-                value={cliInput}
-                onChange={(e) => setCliInput(e.target.value)}
-                className="cli-input"
-              />
-            </form>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 }
 
