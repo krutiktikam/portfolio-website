@@ -1,23 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-export const ResumeViewerModal = ({ isOpen, onClose, initialView = "ai" }) => {
+export const ResumeViewerModal = ({ isOpen, onClose, initialView = "ai", triggerRef = null }) => {
   const [activeTab, setActiveTab] = useState(initialView);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
       setActiveTab(initialView);
+      if (modalRef.current) {
+        modalRef.current.focus();
+      }
     }
   }, [isOpen, initialView]);
 
   useEffect(() => {
+    const triggerEl = triggerRef?.current;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
     if (isOpen) {
       window.addEventListener('keydown', handleKeyDown);
     }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if (triggerEl) {
+        triggerEl.focus();
+      }
+    };
+  }, [isOpen, onClose, triggerRef]);
 
   if (!isOpen) return null;
 
@@ -41,10 +51,18 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialView = "ai" }) => {
   const currentConfig = resumeConfigs[activeTab] || resumeConfigs.ai;
 
   return (
-    <div className="modal-backdrop resume-modal-backdrop" onClick={onClose}>
-      <div className="resume-modal-container" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-backdrop resume-modal-backdrop" onClick={onClose} role="presentation">
+      <div 
+        className="resume-modal-container" 
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resume-dialog-title"
+        tabIndex={-1}
+        ref={modalRef}
+      >
         <div className="resume-modal-header">
-          <div className="resume-tabs-row" role="tablist">
+          <div className="resume-tabs-row" role="tablist" id="resume-dialog-title">
             {Object.entries(resumeConfigs).map(([key, config]) => {
               const isSelected = activeTab === key;
               return (
@@ -84,7 +102,7 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialView = "ai" }) => {
               type="button" 
               className="modal-close-btn" 
               onClick={onClose}
-              aria-label="Close modal"
+              aria-label="Close resume viewer"
             >
               ✕
             </button>

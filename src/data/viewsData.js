@@ -6,12 +6,31 @@ export const viewsData = {
     id: "ai",
     label: "AI / Backend",
     toggleText: "Switch to Data Analyst view",
-    headline: "AI & Backend Engineer. Local LLMs, RAG and computer vision on a 4 GB GPU.",
-    availability: "Open to junior AI/backend and data analyst roles, remote or Mumbai.",
+    headline: "AI & BACKEND ENGINEER",
+    subheadline: "Local LLMs, RAG and computer vision on a 4 GB GPU. Open to junior AI/backend and data analyst roles, remote or Mumbai.",
     resumeFile: "./resumes/resume-ai-backend.pdf",
     resumeDownloadName: "Krutik_Tikam_Resume_AI_Backend.pdf",
     resumeLabel: "AI & Backend Resume",
     
+    stats: [
+      {
+        value: "84.4%",
+        caption: "mAP@50, Sports Analyser, validation split"
+      },
+      {
+        value: "12,393",
+        caption: "text chunks, OmniMath-Local index"
+      },
+      {
+        value: "2.06 s",
+        caption: "average latency, OmniMath-Local"
+      },
+      {
+        value: "6.5 MB",
+        caption: "idle RAM, AURA HUD Rust shell (main process only)"
+      }
+    ],
+
     skillsGroups: [
       {
         category: "AI/ML",
@@ -37,17 +56,19 @@ export const viewsData = {
 
     experience: [
       {
+        period: "Dec 2025 to Feb 2026",
         role: "Software Engineering Intern",
         organization: "Talent Corner HR Services",
-        period: "Dec 2025 to Feb 2026",
-        details: "Flask REST APIs, OTP login, PostgreSQL schema changes in a 60,000+ profile database."
+        description: "Flask REST APIs, OTP login, PostgreSQL schema changes in a 60,000+ profile database."
       }
     ],
 
     education: [
       {
-        degree: "B.Sc. Computer Science (AI & ML)",
-        period: "2023-2026"
+        period: "2023 to 2026",
+        role: "B.Sc. Computer Science (AI & ML)",
+        organization: "Nagandas Khandwala College",
+        description: "Nagandas Khandwala College, B.Sc. Computer Science (AI & ML), 2023 to 2026."
       }
     ]
   },
@@ -56,12 +77,31 @@ export const viewsData = {
     id: "data",
     label: "Data Analyst",
     toggleText: "Switch to AI & Backend view",
-    headline: "AI & Backend Engineer. Local LLMs, RAG and computer vision on a 4 GB GPU.",
-    availability: "Open to junior AI/backend and data analyst roles, remote or Mumbai.",
+    headline: "AI & BACKEND ENGINEER",
+    subheadline: "Local LLMs, RAG and computer vision on a 4 GB GPU. Open to junior AI/backend and data analyst roles, remote or Mumbai.",
     resumeFile: "./resumes/resume-data-analytics.pdf",
     resumeDownloadName: "Krutik_Tikam_Resume_Data_Analytics.pdf",
     resumeLabel: "Data & Analytics Resume",
     
+    stats: [
+      {
+        value: "84.4%",
+        caption: "mAP@50, Sports Analyser, validation split"
+      },
+      {
+        value: "12,393",
+        caption: "text chunks, OmniMath-Local index"
+      },
+      {
+        value: "2.06 s",
+        caption: "average latency, OmniMath-Local"
+      },
+      {
+        value: "60,000+",
+        caption: "profiles, PostgreSQL database at Talent Corner"
+      }
+    ],
+
     skillsGroups: [
       {
         category: "Analytics",
@@ -87,27 +127,52 @@ export const viewsData = {
 
     experience: [
       {
+        period: "Aug to Oct 2026",
         role: "Wyscout Analyst",
         organization: "Hudl India",
-        period: "Aug to Oct 2026",
-        details: "Sports telemetry and match analysis with Wyscout."
+        description: "Sports telemetry and match analysis with Wyscout."
       },
       {
+        period: "Dec 2025 to Feb 2026",
         role: "Software Engineering Intern",
         organization: "Talent Corner HR Services",
-        period: "Dec 2025 to Feb 2026",
-        details: "Flask REST APIs, OTP login, PostgreSQL schema changes in a 60,000+ profile database."
+        description: "Flask REST APIs, OTP login, PostgreSQL schema changes in a 60,000+ profile database."
       }
     ],
 
     education: [
       {
-        degree: "B.Sc. Computer Science (AI & ML)",
-        period: "2023-2026"
+        period: "2023 to 2026",
+        role: "B.Sc. Computer Science (AI & ML)",
+        organization: "Nagandas Khandwala College",
+        description: "Nagandas Khandwala College, B.Sc. Computer Science (AI & ML), 2023 to 2026."
       }
     ]
   }
 };
+
+export const howIWorkSteps = [
+  {
+    step: "01",
+    badge: "Build",
+    text: "Small local-first systems on a 4 GB GPU."
+  },
+  {
+    step: "02",
+    badge: "Measure",
+    text: "Latency, memory and accuracy on real hardware."
+  },
+  {
+    step: "03",
+    badge: "Verify",
+    text: "SymPy and AST checks; tests and CI in progress."
+  },
+  {
+    step: "04",
+    badge: "Document",
+    text: "READMEs with limits and next steps."
+  }
+];
 
 export const contactInfo = {
   email: "krutiktikam7@gmail.com",
