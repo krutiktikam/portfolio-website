@@ -36,14 +36,14 @@ export const ResumeViewerModal = ({ isOpen, onClose, initialView = "ai", trigger
       code: "AI / Backend",
       label: "AI & Backend Resume",
       path: "./resumes/resume-ai-backend.pdf",
-      fileName: "Krutik_Tikam_Resume_AI_Backend.pdf",
+      fileName: "Krutik_Tikam_AI_Backend_Resume.pdf",
       description: "Focused on Local LLMs, RAG, Computer Vision, and Backend Engineering."
     },
     data: {
       code: "Data / Analytics",
       label: "Data & Analytics Resume",
       path: "./resumes/resume-data-analytics.pdf",
-      fileName: "Krutik_Tikam_Resume_Data_Analytics.pdf",
+      fileName: "Krutik_Tikam_Data_Analyst_Resume.pdf",
       description: "Focused on Data Analytics, SQL, Python, ETL, and Sports Telemetry."
     }
   };

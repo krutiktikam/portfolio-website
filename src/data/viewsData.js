@@ -9,7 +9,7 @@ export const viewsData = {
     headline: "AI & BACKEND ENGINEER",
     subheadline: "Local LLMs, RAG and computer vision on a 4 GB GPU. Open to junior AI/backend and data analyst roles, remote or Mumbai.",
     resumeFile: "./resumes/resume-ai-backend.pdf",
-    resumeDownloadName: "Krutik_Tikam_Resume_AI_Backend.pdf",
+    resumeDownloadName: "Krutik_Tikam_AI_Backend_Resume.pdf",
     resumeLabel: "AI & Backend Resume",
     
     stats: [
@@ -80,7 +80,7 @@ export const viewsData = {
     headline: "AI & BACKEND ENGINEER",
     subheadline: "Local LLMs, RAG and computer vision on a 4 GB GPU. Open to junior AI/backend and data analyst roles, remote or Mumbai.",
     resumeFile: "./resumes/resume-data-analytics.pdf",
-    resumeDownloadName: "Krutik_Tikam_Resume_Data_Analytics.pdf",
+    resumeDownloadName: "Krutik_Tikam_Data_Analyst_Resume.pdf",
     resumeLabel: "Data & Analytics Resume",
     
     stats: [
