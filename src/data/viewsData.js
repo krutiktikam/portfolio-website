@@ -67,8 +67,8 @@ export const viewsData = {
       {
         period: "2023 to 2026",
         role: "B.Sc. Computer Science (AI & ML)",
-        organization: "Nagandas Khandwala College",
-        description: "Nagandas Khandwala College, B.Sc. Computer Science (AI & ML), 2023 to 2026."
+        organization: "Nagindas Khandwala College",
+        description: "Nagindas Khandwala College, B.Sc. Computer Science (AI & ML), 2023 to 2026."
       }
     ]
   },
@@ -144,8 +144,8 @@ export const viewsData = {
       {
         period: "2023 to 2026",
         role: "B.Sc. Computer Science (AI & ML)",
-        organization: "Nagandas Khandwala College",
-        description: "Nagandas Khandwala College, B.Sc. Computer Science (AI & ML), 2023 to 2026."
+        organization: "Nagindas Khandwala College",
+        description: "Nagindas Khandwala College, B.Sc. Computer Science (AI & ML), 2023 to 2026."
       }
     ]
   }
